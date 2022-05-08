@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include <iostream>
 #include <math.h>
+#include <regex>
 
 using namespace std;
 
@@ -107,6 +108,11 @@ tipo encode(string cadena, int base) {
 }
 
 
+void RabinKarp(string subcadena, tipo codigo) {
+
+}
+
+
 int main()
 {
 	// La siguiente funcion ejemplifica algunas funciones basicas con
@@ -121,8 +127,40 @@ int main()
 	// A simple transformation to a hash
 	cout << encode(cadena, 256) << endl;
 	
+	string texto = "La ciudad de tijuana es muy dinamica. La cuidad de tijuana es una metropolis";
 
+	/* 
+		El caracter R"(\s+)" indica que se debe utilizar como criterio de separacion de cadenas la existencia
+		de uno o mas espacios. El iterador se coloca al inicio de la cadena y finaliza en un caracter oculto 
+		que indica la terminacion de la cadena.
+	
+	auto const re = std::regex{ R"(\s+)" };
+	auto const tokens = std::vector<std::string>(
+		std::sregex_token_iterator{ begin(texto), end(texto), re, -1 },
+		std::sregex_token_iterator{}
+	);
 
+	int index = 0;
+	for (string token : tokens) {
+
+		cout << token << endl;
+	} */
+
+	tipo cadena_codificada = encode(cadena, 256);
+	int len		= texto.length();
+	int bloque	= cadena.length();
+	
+	int i	= 0;
+	int f	= bloque;
+
+	// Implementacion no eficiente
+		while( (i + bloque) < len ) {
+		 
+		if( encode(texto.substr(i, f), 256) == cadena_codificada)
+			cout << "Encontro una instancia en el indice : " << i << endl;
+		i += 1;
+		f += 1;
+	}
 	return 0;
 }
 
