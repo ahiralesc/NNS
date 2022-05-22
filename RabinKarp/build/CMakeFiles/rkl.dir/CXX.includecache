@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ahiralesc/mysrc/Hash/Rabin_Karp/src/RabinKarp.cpp
+iostream
+-
+math.h
+-
+regex
+-
+
