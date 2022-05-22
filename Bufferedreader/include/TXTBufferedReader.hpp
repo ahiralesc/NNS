@@ -23,23 +23,88 @@ limitations under the License.
 *   @date 1
 */
 
+#ifndef _TXT_Buffered_Reader__
+#define _TXT_Buffered_Reader__
+
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <vector>
+
+using namespace std;
 
 class TXTBufferedReader {
 
     public:
+    
     static TXTBufferedReader& getInstance() {
         static TXTBufferedReader* singleton = new TXTBufferedReader();
         return *singleton;
     } 
 
-    
+
+    TXTBufferedReader(string fname) {
+        assert(fileName != NULL); 
+
+        ifstrm.open(fname);
+        if(!ifstrm) {
+            cerr << "Error: could not open the file" << endl;
+            exit(EXIT_FAILURE);
+        }
+    };
+
+
+    ~TXTBufferedReader(){  ifstrm.close(); };
+
+
+    string next() {
+        string row;
+        
+        ensureBufferRefill();
+        if ( !(done && rows.empty()) ) {{
+            row = rows[0];
+            rows.erase(rows.beging());
+        }
+        return row;
+    }
+
 
     private:
-    TXTBufferedReader() = default;
+    // The number of rows
+    long nrows;
 
+    // A queue holding size rows from the file
+    std::vector<string> rows;
+
+    // The input stream
+    ifstream ifstrm;
+
+    // Initialization/completion flags
+    bool initialized{false}, done{false};
+
+
+    void ensureBufferRefill() {
+        string row;
+
+        if( rows.empty() && !done ) {
+            for(int i=0; i<num_rows; i++) {
+                getline(ifstrm, row);
+                if( ifstrm.eof() ) {
+                    done = true; 
+                    return;
+                } else
+                    rows.push_back(row);  
+             }
+        }
+    }
+
+    
     // Delete copy/move so extra instances can't be created/moved.
     TXTBufferedReader(const TXTBufferedReader&) = delete;
     TXTBufferedReader& operator=(const TXTBufferedReader&) = delete;
     TXTBufferedReader(TXTBufferedReader&&) = delete;
     TXTBufferedReader& operator=(TXTBufferedReader&&) = delete;
 };
+
+
+#endif
