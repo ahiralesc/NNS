@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 -DNDEBUG   CMakeFiles/bufferedReaderTest.dir/test/bufferedReaderTest.cpp.o  -o testBin/bufferedReaderTest  -L/home/ahiralesc/mysrc/Hash/Bufferedreader/build -Wl,-rpath,/opt/boost_1_78_0/stage/lib:/home/ahiralesc/mysrc/Hash/Bufferedreader/build /opt/boost_1_78_0/stage/lib/libboost_unit_test_framework.so -lrkl 
