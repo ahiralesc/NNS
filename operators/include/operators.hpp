@@ -3,10 +3,13 @@
 #include<iostream>
 #include<unordered_map>
 
-// Todos los operadores hash suponen codificacion ISO-Latin 1 
+// All operators assume ISO-Latin 1 encoding
 
-
-
+/*
+ *
+ * Adler hash operator
+ *
+ */
 struct Adler32_hash
 {
 	std::size_t operator*(std::string const& str) const noexcept
@@ -23,10 +26,10 @@ struct Adler32_hash
 
 
 /*
- * Funcion hash por Sedgewick, 1998
  *
-*/
-
+ * Sedgewick hash operator, 1998
+ *
+ */
 struct Sedgewick_hash
 {
 	std::size_t operator*(std::string const& str) const noexcept

@@ -1,11 +1,14 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.5.1)
+
+set(CMAKE_BUILD_TYPE Release)
 
 # Defines the project properties
 project( 
 	"Hash operators" 
 	VERSION 1.0.0
 	DESCRIPTION "A header-only c++ library that provides hash operators"
-	HOMEPAGE_URL "https://github.com/ahiralesc/Hash")
+	HOMEPAGE_URL "https://github.com/ahiralesc/Hash"
+	LANGUAGES CXX)
 
 # GNU directory structure. 
 # See https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html
@@ -39,42 +42,38 @@ target_compile_features(operators INTERFACE cxx_std_11)
 enable_testing()
 
 
-# Tests are to be stored in the subdirectory test
-add_subdirectory(test)
+
+# Find boost test framework
+find_package(Boost COMPONENTS unit_test_framework REQUIRED)
+add_definitions (-DBOOST_TEST_DYN_LINK)
+include_directories(${Boost_INCLUDE_DIRS})
 
 
-# locations are provided by GNUInstallDirs
-install(
-	TARGETS operators
-	EXPORT operators_Targets
-	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+# The location of the test codes sources
+file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} test/*.cpp)
 
 
-include(CMakePackageConfigHelpers)
+# Find test codes
+foreach(testSrc ${TEST_SRCS})
+    #Extract the filename without an extension (NAME_WE)
+    get_filename_component(testName ${testSrc} NAME_WE)
 
+    # Add compile target
+    add_executable(${testName} ${testSrc})
 
-write_basic_package_version_file(
-	"operatorsConfigVersion.cmake"
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion)
+    # Add dependency
+    add_dependencies(${testName} stl)
 
+    # link to Boost libraries AND your targets and dependencies
+    target_link_libraries(${testName} ${Boost_LIBRARIES} ${CMAKE_CURRENT_SOURCE_DIR}/build/libstl.so )
 
-configure_package_config_file(
-	"${PROJECT_SOURCE_DIR}/cmake/operatorsConfig.cmake.in"
-  	"${PROJECT_BINARY_DIR}/operatorsConfig.cmake"
-  	INSTALL_DESTINATION
-  	${CMAKE_INSTALL_DATAROOTDIR}/operators/cmake)
+    # Location of the test binaries 
+    set_target_properties(${testName} PROPERTIES 
+    RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/build/testBin)
 
-
-install(EXPORT operators_Targets
-        FILE operatorsTargets.cmake
-        NAMESPACE operators::
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/operators/cmake)
-
-install(FILES "${PROJECT_BINARY_DIR}/operatorsConfig.cmake"
-              "${PROJECT_BINARY_DIR}/operatorsConfigVersion.cmake"
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/operators/cmake)
-
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/operators DESTINATION include)
+    # Add the test to the collection of tests 
+    # Notice the WORKING_DIRECTORY and COMMAND
+    add_test(NAME ${testName} 
+             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build/testBin 
+             COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/build/testBin/${testName} )
+endforeach(testSrc)
