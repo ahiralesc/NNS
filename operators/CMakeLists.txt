@@ -21,6 +21,7 @@ include(GNUInstallDirs)
 add_library(operators INTERFACE)
 
 
+
 # The keyword INTERFACE means that files in the library are public and  visible when 
 # using the library.  
 # $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> indicates that the include 
@@ -62,10 +63,10 @@ foreach(testSrc ${TEST_SRCS})
     add_executable(${testName} ${testSrc})
 
     # Add dependency
-    add_dependencies(${testName} stl)
+    add_dependencies(${testName} operators)
 
     # link to Boost libraries AND your targets and dependencies
-    target_link_libraries(${testName} ${Boost_LIBRARIES} ${CMAKE_CURRENT_SOURCE_DIR}/build/libstl.so )
+    # target_link_libraries(${testName} ${Boost_LIBRARIES} ${CMAKE_CURRENT_SOURCE_DIR}/build/libstl.so )
 
     # Location of the test binaries 
     set_target_properties(${testName} PROPERTIES 

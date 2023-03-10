@@ -10,11 +10,34 @@ using namespace std;
 
 BOOST_AUTO_TEST_SUITE(HashOpTEST)
 
-/*
- * Evaluate simple colision between similar keys
- */
-BOOST_AUTO_TEST_CASE_TEMPLATE( addler_collision_test )
-{
-	
 
+/*
+ * Adler operator key generation test
+ */
+BOOST_AUTO_TEST_CASE( adler_key_test )
+{
+	bool flag{false};
+
+	if(Adler32_hash{}("cadena") == "107126775374179")
+		flag = true;
+
+	BOOST_CHECK_EQUAL( flag, true);
+	
 }
+
+
+/*
+ * Sedgewick operator ker generation test
+ */
+
+BOOST_AUTO_TEST_CASE( sedgewick_key_test )
+{
+	bool flag{false};
+
+	if(Sedgewick_Hash{}("cadena") == "107126775374179" )
+		flag = true;
+
+	BOOST_CHECK_EQUAL( flag, true);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
