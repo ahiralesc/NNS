@@ -39,9 +39,9 @@ target_include_directories(
 target_compile_features(operators INTERFACE cxx_std_11)
 
 
+
 # Enables creation of test cases
 enable_testing()
-
 
 
 # Find boost test framework
@@ -66,7 +66,7 @@ foreach(testSrc ${TEST_SRCS})
     add_dependencies(${testName} operators)
 
     # link to Boost libraries AND your targets and dependencies
-    # target_link_libraries(${testName} ${Boost_LIBRARIES} ${CMAKE_CURRENT_SOURCE_DIR}/build/libstl.so )
+    target_link_libraries(${testName} ${Boost_LIBRARIES} operators )
 
     # Location of the test binaries 
     set_target_properties(${testName} PROPERTIES 
