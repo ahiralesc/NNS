@@ -13,18 +13,17 @@ BOOST_AUTO_TEST_SUITE(HashOpTEST)
 #define  m 65521
 
 /*
- * Adler operator key generation test
+ * Sedgewick operator ker generation test
  */
-BOOST_AUTO_TEST_CASE( adler_key_test )
+
+BOOST_AUTO_TEST_CASE( sedgewick_key_test )
 {
 	bool flag{false};
 
-	if(Adler32_hash{}("cadena", m) == 137560668)
+	if(Sedgewick_hash{}("cadena", m) == 63810 )
 		flag = true;
 
 	BOOST_CHECK_EQUAL( flag, true);
-	
 }
-
 
 BOOST_AUTO_TEST_SUITE_END()
