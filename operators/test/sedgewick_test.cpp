@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE "Addler test"
+#define BOOST_TEST_MODULE "Sedgewick test"
 #define BOOST_TEST_MAIN
 
 #include <boost/test/unit_test.hpp>
