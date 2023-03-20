@@ -1,32 +1,32 @@
 cmake_minimum_required(VERSION 3.5.1)
+project(guttaccept)
 
 set(CMAKE_BUILD_TYPE Release)
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# For use of gdb to analyze segmentation faults
+# set(GCC_DEBUG_COMPILE_FLAGS "-g")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_DEBUG_COMPILE_FLAGS}")
 
-project(
-	"Text buffered reader"
-	VERSION 1.0.0
-	DESCRIPTION "A simple text buffered reader"
-	HOMEPAGE_URL "https://github.com/ahiralesc/Hash"
-	LANGUAGES CXX)
+# Header location
+include_directories( ../csvrw/include )
+include_directories( ../trace/include )
+include_directories( include )
 
-include(GNUInstallDirs)
+# Library location
+set(PROJECT_LINK_LIBS libcsv.so libtrace.so)
+link_directories( lib ) 
 
-
-#Include the headers *.h from the include dir.
-include_directories(include)
-
-
-#Wildcard addition for sources
+# Source location
 file(GLOB SOURCES "src/*.cpp")
 
+# Executable target
+add_executable(guttaccept ${SOURCES})
 
-#Generate the shared library from the sources
-add_library(csv SHARED ${SOURCES})
+# Link libraries to executable target
+target_link_libraries(guttaccept ${PROJECT_LINK_LIBS})
 
-
-#Set the location for library installation -- i.e., /usr/lib in this case
-# not really necessary in this example. Use "sudo make install" to apply
-# install(TARGETS csv DESTINATION /home/ahiralesc/mysrc/cpp/cutu/guttaccept/lib)
+# The location were the binary will be install
+install(TARGETS guttaccept DESTINATION /home/ahiralesc/mysrc/cpp/cutu/bin)
