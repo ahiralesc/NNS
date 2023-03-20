@@ -1,32 +1,22 @@
 cmake_minimum_required(VERSION 3.5.1)
 
+# Locality Sensitive Hashing
+project(LSH)
+
 set(CMAKE_BUILD_TYPE Release)
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# For use of gdb to analyze segmentation faults
+# set(GCC_DEBUG_COMPILE_FLAGS "-g")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_DEBUG_COMPILE_FLAGS}")
 
-project(
-	"Text buffered reader"
-	VERSION 1.0.0
-	DESCRIPTION "A simple text buffered reader"
-	HOMEPAGE_URL "https://github.com/ahiralesc/Hash"
-	LANGUAGES CXX)
+# Header location
+include_directories( include )
 
-include(GNUInstallDirs)
-
-
-#Include the headers *.h from the include dir.
-include_directories(include)
-
-
-#Wildcard addition for sources
+# Source location
 file(GLOB SOURCES "src/*.cpp")
 
-
-#Generate the shared library from the sources
-add_library(csv SHARED ${SOURCES})
-
-
-#Set the location for library installation -- i.e., /usr/lib in this case
-# not really necessary in this example. Use "sudo make install" to apply
-# install(TARGETS csv DESTINATION /home/ahiralesc/mysrc/cpp/cutu/guttaccept/lib)
+# Executable target
+add_executable(lsh ${SOURCES})
