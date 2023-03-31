@@ -66,8 +66,6 @@ void parseCLA(int argc, char** argv)
 		\n\
 		\t\ -osn \t\ the output path and file name of the JSON formatted hash table \n\
 		\n\
-		\t\ --non_compliant \t\ list of lines with non UTF8 compliant characters \n\
-		\n\
 		\t\ --fingerprint \t\ creates the fingerprint for the given input file \n\
 		\n\
 		EXAMPLES \n\
@@ -75,25 +73,17 @@ void parseCLA(int argc, char** argv)
 		\t\ lsh -isn file.txt -osn file.json", ' ', "0.1");
  
  		// List of value arguments
-        ValueArg<int> numOfRows("b", "buffer","Number of rows to buffer", false, 1000, "int");
-        cmd.add( numOfRows );
- 
-        ValueArg<string> in_file_name("f", "in_file", "The file name of the Google cluster traces to parse", false, "", "string");
-        cmd.add( in_file_name );
+        ValueArg<string> ifn("isn", "ifn", "The input TXT file", false, "", "string");
+        cmd.add( ifn );
 
-        ValueArg<string> accepted_os("a", "accepted", "The file name where the accepted traces will be stored", false, "accept.json", "string");
-        cmd.add( accepted_os );
+        ValueArg<string> ofn("osn", "ofn", "The JSON file with the computed hash tables", false, "", "string");
+        cmd.add( ofn );
 
-        ValueArg<string> rejected_os("r", "rejected", "The file name where the rejected traces will be stored", false, "reject.json", "string");
-        cmd.add( rejected_os );
 
         // Parse the argumnets
         cmd.parse( argc, argv );
-        num_rows = numOfRows.getValue();
-        in_file = in_file_name.getValue();
-        aos = accepted_os.getValue();
-        ros = rejected_os.getValue();
-            
+        isn = ifn.getValue();
+        osn = ofn.getValue();
         }catch(ArgException &e) {
             cerr << "Error: " << e.error() << " for argument " << e.argId() << endl;
             exit(EXIT_FAILURE);
