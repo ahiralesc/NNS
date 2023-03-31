@@ -68,14 +68,13 @@ void parseCLA(int argc, char** argv)
 		\n\
 		\t\ --non_compliant \t\ list of lines with non UTF8 compliant characters \n\
 		\n\
-		\t\ -
-		lshguttaccept (Google cluster Usage Task Accept) extracts complete and incomplete execution traces of tasks stored in GUT-Task format (See Google Cluster Usage Traces: format + schema, pp. 8). guttaccept carries out two phases, localization and evaluation. The first phase finds and integrates each task events. The later phase classifies traces as either complete or incomplete. A trace is complete if it contains the initial event, reaches a final event, and all its event transitions are valid, otherwise it is incomplete. The second phase is carried out after the first phase completes. \n\
-\n\
-Modes of execution: \n\
-\tzcat file.csv.gz | guttaccept -a <accepted trace filename>.json -r <rejected trace filename>.json \n\
-guttaccept -f file.csv -a <accepted trace filename>.json -r <rejected trace filename>.json", ' ', "0.1");
+		\t\ --fingerprint \t\ creates the fingerprint for the given input file \n\
+		\n\
+		EXAMPLES \n\
+		\t\ lsh -fingerprint -isn file.txt -osn file.json \n\
+		\t\ lsh -isn file.txt -osn file.json", ' ', "0.1");
  
-        // List of value arguments
+ 		// List of value arguments
         ValueArg<int> numOfRows("b", "buffer","Number of rows to buffer", false, 1000, "int");
         cmd.add( numOfRows );
  
