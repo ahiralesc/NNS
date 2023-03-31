@@ -15,32 +15,24 @@ limitations under the License.
 
 
 #include <iostream>
-#include <string>
 #include <fstream>
 #include <vector>
-#include <climits>
-#include "tclap/CmdLine.h"
-#include "buffered_reader.hpp"
-
-
-using namespace std;
-using namespace boost;
+#include <sstream>
+#include <tclap/CmdLine.h>
+#include "lsh.hpp"
 
 
 /* Parsed number of rows */
-int _num_rows = -1;
-
+int _rows{-1};
 
 /* Parsed input stream name */
-string _isn{};
-
+std::string _isn{};
 
 /* Parsed output stream name */
-string _osn{}; 
+std::string _osn{}; 
 
-
-/* Parsed non-UTF8 stream name */
-string _non_UTF_compliant{}; 
+/* Parsed shingling size */
+int _shingling{9};
 
 
 /**
@@ -52,42 +44,45 @@ void parseCLA(int argc, char** argv)
 {
 	try{
 
-		CmdLine cmd(
+		TCLAP::CmdLine cmd(
 		"NAME \n\
 		\t\ lsh - Locality Sensitive Hashing \n\
 		SYNPSIS \n\
-		\t\ lsh [options] \n\
+		\t\ lsh [OPTIONS] FILE \n\
 		DESCRIPTION \n\
-		\t\ lsh computes the hash table of UTF8 compliant text files. \n\
+		\t\ Computes a set of hash tables and stores them in a JSON ontolgy of a given text file. \n\
 		\n\
-		\t\ Mandatory arguments are single  hyphen (-). Optional arguments are double hypen (--). See project page for the osn JSON Ontology. \n\
+		\t\ -f \t\ The target JSON file. \n\
 		\n\
-		\t\ -isn \t\ the input path and file name of an uncompress text file \n\
+		\t\ -i \t\ The input text file. \n\
 		\n\
-		\t\ -osn \t\ the output path and file name of the JSON formatted hash table \n\
-		\n\
-		\t\ --fingerprint \t\ creates the fingerprint for the given input file \n\
+		\t\ -s \t\ The word shingling length. 9 by default. \n\
 		\n\
 		EXAMPLES \n\
-		\t\ lsh -fingerprint -isn file.txt -osn file.json \n\
+		\t\ zcat file.gz | lsh -osn file.json \n\
 		\t\ lsh -isn file.txt -osn file.json", ' ', "0.1");
  
- 		// List of value arguments
-        ValueArg<string> ifn("isn", "ifn", "The input TXT file", false, "", "string");
-        cmd.add( ifn );
+ 	
+		// List of value arguments
+		TCLAP::ValueArg<string> ofn("f", "file", "the target JSON file", false, "", "string");
+		cmd.add( ofn );
 
-        ValueArg<string> ofn("osn", "ofn", "The JSON file with the computed hash tables", false, "", "string");
-        cmd.add( ofn );
+		TCLAP::ValueArg<string> ifn("i", "file", "the input text file", false, "", "string");
+		cmd.add( ifn );
 
+		TCLAP::ValueArg<int> k("s", "length", "the word shingling length", false, 9, "int");
+		cmd.add( k );
 
-        // Parse the argumnets
-        cmd.parse( argc, argv );
-        isn = ifn.getValue();
-        osn = ofn.getValue();
-        }catch(ArgException &e) {
+		// Parse the argumnets
+		cmd.parse( argc, argv );
+		_isn = ifn.getValue();
+		_osn = ofn.getValue();
+		_shingling = k.getValue();
+
+	}catch(TCLAP::ArgException &e) {
             cerr << "Error: " << e.error() << " for argument " << e.argId() << endl;
             exit(EXIT_FAILURE);
-        }
+	}
 }
 
 
@@ -98,14 +93,14 @@ int main(int argc, char** argv)
 {
     parseCLA( argc, argv );
 
-    GUTTAccept parser { num_rows, in_file, aos, ros }; 
-    parser.process();
+    Hyperplane_LSH lsh{ _isn, _osn, _shingling }; 
+    lsh.process();
     
     return 0;
 }
 
 /**
-*   Coordinates the translation process
+*   Coo`ddrdinates the translation process
 */
 void GUTTAccept::translate(string &line) {
     TaskEvent event{line,"cvs"};
@@ -125,25 +120,37 @@ void GUTTAccept::translate(string &line) {
 /**
 *   Coordiantes I/O with the translation process 
 */
-void GUTTAccept::process( )
+void LSH::process( )
 {
-    string input_line;
+	std::string input_line, word;
+	std::vector<std::string> buffer;
 
-    // Parse the file from a given file
-    if( !in_file.empty() ) {
-        csv_buffered_reader reader{in_file, num_rows};
-        do{
-            input_line = reader.next();
-            if( !input_line.empty() )
-                translate( input_line );
-        } while ( !reader.empty() );
-    } else {
-        // Parse the file from stdin
+	// Parse the input by opening the file using a buffered reader
+	if( !isn.empty() ) {
+		
+		// create the word buffered reader
+		std::ifstream file( isn );
+		if( !file.is_open()) {
+			std:cerr << "Could not open input file: " << file << std::endl;
+			return EXIT_FAILURE;
+		}
+
+		// load the file word strings
+		while(file >> word) 
+			buffer.push_back(word);
+
+		// close the file
+		file.close();
+	} else {
+        // Parse the input by processing the standard input
         while(cin) {
             getline( cin, input_line );
             
-            if( !input_line.empty() )
+            if( !input_line.empty() ) {
+				istringstream ss(str);
+
                 translate( input_line );
+			}
         }
 
         fflush( stdout );
