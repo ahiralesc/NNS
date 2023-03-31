@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/lsh.dir/src/buffered_reader.cpp.o CMakeFiles/lsh.dir/src/lsh.cpp.o -o lsh 
