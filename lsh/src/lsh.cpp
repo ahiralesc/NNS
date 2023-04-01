@@ -17,7 +17,6 @@ limitations under the License.
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <sstream>
 #include <tclap/CmdLine.h>
 #include "lsh.hpp"
 
@@ -34,6 +33,7 @@ std::string _osn{};
 /* Parsed shingling size */
 int _shingling{9};
 
+using namespace std;
 
 /**
 *
@@ -44,17 +44,17 @@ void parseCLA(int argc, char** argv)
 {
 	try{
 
-		TCLAP::CmdLine cmd("NAME \n \t lsh - Locality Sensitive Hashing \n SYNPSIS \n \t lsh [OPTIONS] FILE \n DESCRIPTION \n \t Computes a set of hash tables and stores them in a JSON ontolgy of a given text file. \n \n \t -f \t The target JSON file. \n \n \t -i \t The input text file. \n \n \t -s \t The word shingling length. 9 by default. \n \n EXAMPLES \n \t zcat file.gz | lsh -osn file.json \n \t lsh -isn file.txt -osn file.json", ' ', "0.1");
+		TCLAP::CmdLine cmd("NAME \n \t lsh - Locality Sensitive Hashing \n SYNOPSIS \n \t lsh [OPTIONS] FILE \n DESCRIPTION \n \t Given a text file, lsh computes a set of hash tables and stores them in a JSON file.  \n EXAMPLES \n \t zcat file.gz | lsh -osn file.json \n \t lsh -isn file.txt -osn file.json", ' ', "0.1");
  
  	
 		// List of value arguments
-		TCLAP::ValueArg<std::string> ofn("f", "file", "the target JSON file", false, "", "string");
+		TCLAP::ValueArg<string> ofn("f", "json", "The target JSON file that will store the hash tables", false, "", "string");
 		cmd.add( ofn );
 
-		TCLAP::ValueArg<std::string> ifn("i", "file", "the input text file", false, "", "string");
+		TCLAP::ValueArg<string> ifn("i", "txt", "The source text file", false, "", "string");
 		cmd.add( ifn );
 
-		TCLAP::ValueArg<int> k("s", "length", "the word shingling length", false, 9, "int");
+		TCLAP::ValueArg<int> k("s", "length", "The word shingling length. By default 9", false, 9, "int");
 		cmd.add( k );
 
 		// Parse the argumnets
@@ -64,7 +64,7 @@ void parseCLA(int argc, char** argv)
 		_shingling = k.getValue();
 
 	}catch(TCLAP::ArgException &e) {
-            std::cerr << "Error: " << e.error() << " for argument " << e.argId() << std::endl;
+            cerr << "Error: " << e.error() << " for argument " << e.argId() << endl;
             exit(EXIT_FAILURE);
 	}
 }
@@ -84,43 +84,35 @@ int main(int argc, char** argv)
 }
 
 
-
 /**
-*   Coordiantes I/O with the translation process 
+*   Parses the text file from stdin or a given file
 */
 void LSH::process( )
 {
-	std::string input_line, word;
-	std::vector<std::string> buffer;
+	string input_line{}, word{};
+	vector<string> buffer;
 
 	// Parse the input by opening the file using a buffered reader
 	if( !isn.empty() ) {
 		
 		// create the word buffered reader
-		std::ifstream _file( isn );
+		ifstream _file( isn );
 		if( !_file.is_open()) {
-			std::cerr << "Could not open input file: " << isn << std::endl;
+			cerr << "Could not open input file: " << isn << endl;
 			exit(EXIT_FAILURE);
 		}
 
-		// load the file word strings
+		// loads word strings from a text file
 		while(_file >> word) 
 			buffer.push_back(word);
-
-		// close the file
 		_file.close();
 	} else {
         // Parse the input by processing the standard input
-        while(std::cin) {
-            std::getline( std::cin, input_line );
-            
-            if( !input_line.empty() ) {
-				std::istringstream ss(input_line);
-
-			}
+        while(cin) {
+        	while(getline( cin, word, ' ' )) 
+				buffer.push_back( word );
         }
 
         fflush( stdout );
     }
-
 }
