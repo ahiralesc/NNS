@@ -16,7 +16,6 @@ limitations under the License.
 
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <tclap/CmdLine.h>
 #include "lsh.hpp"
 
@@ -31,7 +30,7 @@ std::string _isn{};
 std::string _osn{}; 
 
 /* Parsed shingling size */
-int _shingling{9};
+int _k{9};
 
 using namespace std;
 
@@ -61,7 +60,7 @@ void parseCLA(int argc, char** argv)
 		cmd.parse( argc, argv );
 		_isn = ifn.getValue();
 		_osn = ofn.getValue();
-		_shingling = k.getValue();
+		_k = k.getValue()-1;
 
 	}catch(TCLAP::ArgException &e) {
             cerr << "Error: " << e.error() << " for argument " << e.argId() << endl;
@@ -77,20 +76,32 @@ int main(int argc, char** argv)
 {
     parseCLA( argc, argv );
 
-    LSH lsh{ _isn, _osn, _shingling }; 
-    lsh.process();
+    LSH lsh{ _isn, _osn, _k }; 
+    lsh.load_text();
+	lsh.process();
     
     return 0;
 }
 
 
+void LSH::process()
+{
+	int bz  = buffer.size(), j{};
+	for(int i = 0; i <= bz; i += k){
+		j = ( (i + k) > bz )? i + (bz - i) : i + k;
+		std::vector<string> slice(buffer.begin() + i, buffer.begin() + j);
+		for(auto wstr : slice)
+			std::cout << wstr << " ";
+		std::cout << std::endl;
+	}
+}
+
 /**
 *   Parses the text file from stdin or a given file
 */
-void LSH::process( )
+void LSH::load_text( )
 {
 	string input_line{}, word{};
-	vector<string> buffer;
 
 	// Parse the input by opening the file using a buffered reader
 	if( !isn.empty() ) {
