@@ -24,7 +24,7 @@
 
 # Get the file names from the source path
 
-source_dir=$1  	# Source directory with PDFs
+source_dir=$1  		# Source directory with PDFs
 target_dir=$2		# Target directory where TXT files are to be stored
 
 # If the target directory does not exist, create it.
@@ -39,7 +39,8 @@ for fname in $(ls -AS $source_dir); do
 	then
 		source_fname=${source_dir:0:-1}/$fname
 		target_fname=${target_dir:0:-1}/${fname:0:-4}.txt
-		pdftotext -eol unix $source_fname $target_fname
+
+		pdftotext -layout -enc UTF-8 $source_fname $target_fname
 		echo $target_fname
 	fi
 done
