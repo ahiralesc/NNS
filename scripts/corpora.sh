@@ -24,7 +24,7 @@
 
 
 # Evaluate if arguments are given
-[ $# -eq 0 ] && { echo "Usage: $0 path"; exit 1; }
+[ $# -eq 0 ] && { echo "Usage: $0 source_path target_path"; exit 1; }
 
 # Evaluate if the argument corresponds to a directory
 if [ -d "$1" ]; then
@@ -32,8 +32,7 @@ if [ -d "$1" ]; then
 	for k in $(ls -l $1 | grep '^d' | awk  '{OFS=" "; print $9; }'); do
 		
 		source_file=$1$k/*.txt
-		target_file=$k'_corpora.txt'
-		
+		target_file=$2$k'_corpora.txt'
 		if [ -f /tmp/$target_file ]; then
 			echo "Removing ${target_file} from /tmp"
 			rm /tmp/$target_file
@@ -42,6 +41,6 @@ if [ -d "$1" ]; then
 		echo "Concatenating ${k} files"
 		cat $source_file | tr [:upper:] [:lower:] | \
 		grep -oE '[[:alnum:],[:punct:]]{1,}' | sort --dictionary-order | \
-		uniq -i > /tmp/$target_file
+		uniq -i > $target_file
 	done
 fi
