@@ -40,7 +40,10 @@ for fname in $(ls -AS $source_dir); do
 		source_fname=${source_dir:0:-1}/$fname
 		target_fname=${target_dir:0:-1}/${fname:0:-4}.txt
 
-		pdftotext -layout -enc UTF-8 $source_fname $target_fname
+		# Uncomment to preserve layout
+		#  pdftotext -layout -enc UTF-8 $source_fname $target_fname
+		# Uncommer for single column layout
+		pdftotext -enc UTF-8 $source_fname $target_fname
 		echo $target_fname
 	fi
 done
