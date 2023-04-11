@@ -1,4 +1,7 @@
 from abc import ABCMeta, abstractmethod 
+import re
+import pandas as pd
+
 
 class Filter(object):
 
@@ -35,12 +38,9 @@ class Filter(object):
 # Text Normalization classes
 
 class Rm_control(Filter):
-    """
-            Remove control characters
-    """
     def __init__(self):
-        self.description = "Remove control characters"
-        self.name = "RMCC"
+        self.description = "Replace unicode control characters [ \\t\\n\\r\\f\\v]+ with a single white space."
+        self.name = "rmcc"
 
     def apply(self, pdf, column):
         pdf[column] = pdf[column].apply(lambda data:  re.sub('\s+',' ', data))
@@ -49,12 +49,9 @@ class Rm_control(Filter):
 
 
 class Rm_puntuacion(Filter):
-    """
-             Remove punctuation
-    """
     def __init__(self):
-        self.description = "Remove punctuation characters"
-        self.name = "RMPC"
+        self.description = "Remove punctuation characters [!\"#$%%&\'()*+, -./:;<=>?@[\]^_`{|}~]"
+        self.name = "rmpc"
 
     def apply(self, pdf, column):
         pdf[column] = pdf[column].apply(lambda data: data.translate(str.maketrans('','',string.punctuation)))
@@ -63,12 +60,9 @@ class Rm_puntuacion(Filter):
 
 
 class Rm_numeric(Filter):
-    """
-        Remove numeric values
-    """
     def __init__(self):
-        self.description = "Remove numeric characters"
-        self.name = "RMNC"
+        self.description = "Remove numeric characters [0-9]"
+        self.name = "rmnc"
 
     def apply(self, pdf, column):
         pdf[column] = pdf[column].apply(lambda data: data.translate(str.maketrans('','','1234567890')))
@@ -77,27 +71,20 @@ class Rm_numeric(Filter):
 
 
 class Rm_special(Filter):
-    """
-        Remove special characters (non alphanumeric)
-    """
     def __init__(self):
-        self.description = "Remove special characters"
-        self.name = "RMSC"
+        self.description = "Remove special characters except [a-zA-Z0-9áéíóúÁÉÍÓÚâêî    ôÂÊÎÔãõÃÕçÇ: ]"
+        self.name = "rmsc"
 
     def apply(self, pdf, column):
         pdf[column] = pdf[column].apply(lambda data: re.sub(u"[^a-zA-Z0-9áéíóúÁÉÍÓÚâêîôÂÊÎÔãõÃÕçÇ: ]",r"",data))
         return pdf
-        # pdf[column] = pdf[column].apply(lambda data: re.sub(u"[-()\"#/@;:<>{}`+=~|.!?,]",r"",data))
 
 
 
 class To_lower_case(Filter):
-    """
-        Transform strings to lower case
-    """
     def __init__(self):
         self.description = "Transform strings to lower case"
-        self.name = "TTLC"
+        self.name = "ttlc"
 
     def apply(self, pdf, column):
         pdf[column] = pdf[column].apply(lambda data: data.lower())
