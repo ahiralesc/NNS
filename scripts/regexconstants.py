@@ -46,3 +46,6 @@ RESPIRATORY_RATE_1 = '\b\d{2}\s*(?:or|[-–])\s*\d{2}\s*(?:bpm|breaths/min|breaths
 RESPIRATORY_RATE_2 = '(?:\<|\>)?\s*\d{2}\s*(?:bpm|breaths/min|breaths per minute)'
 RESPIRATORY_RATE_3 = '\b(?:\d{2}\s*[-]\s*|<|>)?\d{2}\s*(?:bpm|breaths/min|breaths per minute)\b'
 TEMPERATURE = '\b[+-]?(?:[0-9]*[.])?[0-9]+\s*(?:±|[\+\/-]+)?\s*(?:[+-]?(?:[0-9]*[.])?[0-9]+)?\s*(?:°C|°F|degrees)\b'
+DRUG_ABUSE_USE = "(?:drug.(?:.*?)(?:abuse|use|usage))|(?:(?:abus(?:e|ing){1}|us(?:e|ing){1}) drug(?:s)?)"
+ALCOHOL_CONSUMPTION = '(?:alcohol.(?:[\r\n]+)?(?:consumption|usage|intake|use|dependent){1})'
+INTESTINE_BOWEL = '(?:bowel obstruction)|(?:small.?)?(?:(?:intestin(?:e|al){1})|bowel)(?:.?resect(?:ed|ion){1})?|(?:resection(?:.*?))(?:intestine|bowel)'
