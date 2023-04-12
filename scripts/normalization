@@ -1,6 +1,8 @@
-#!/bin/python3
+#!/usr/bin/env python
 
 import argparse
+import filters
+import pandas as pd
 
 hp = {
 		"filters" 	: [],

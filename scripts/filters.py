@@ -1,6 +1,8 @@
+#!/bin/python3
+
 from abc import ABCMeta, abstractmethod 
 import re
-import pandas as pd
+#import pandas as pd
 
 
 class Filter(object):
