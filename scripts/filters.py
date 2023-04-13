@@ -2,7 +2,7 @@
 
 from abc import ABCMeta, abstractmethod 
 import re
-#import pandas as pd
+import pandas as pd
 
 
 class Filter(object):
@@ -91,3 +91,18 @@ class To_lower_case(Filter):
     def apply(self, pdf, column):
         pdf[column] = pdf[column].apply(lambda data: data.lower())
         return pdf
+
+
+
+# Filter factory
+class FilterFactory:
+
+    def create(self, atype):
+        auto = {
+            'rmcc'  : Rm_control(),
+            'rmpc'  : Rm_puntuacion(),
+            'rmnc'  : Rm_numeric(),
+            'rmsc'  : Rm_special(),
+            'ttlc'   : To_lower_case()
+        }[atype]
+        return auto
