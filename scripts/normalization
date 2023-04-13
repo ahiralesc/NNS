@@ -2,13 +2,44 @@
 
 import argparse
 import filters
-import pandas as pd
+
 
 hp = {
 		"filters" 	: [],
 		"source"	: None,
 		"target"	: None
 	}
+
+
+# Helper function: loads a text file to a string.
+#def loadRawData( filename ):
+#	"""
+#		Procedure for loading an UTF-8 text file
+#	"""
+#	try:
+#		with open(filename, 'r', encoding='UTF8') as fp:
+#			data = fp.read()
+#		except IOError as e:
+#			print(e)
+#		finally:
+#			fp.close()
+#		return data
+
+
+
+# Helper function: writes a text string to file.
+#def writeRawData(filename, data):
+#		"""
+#			Procedure for writing to an UTF-8 text file
+#		"""
+#		try:
+#			with open(filename, 'w', encoding='UTF8') as fp:
+#				fp.write(data)
+#		except IOError as e:
+#				print(e)
+#		finally:
+#			fp.close()
+
 
 parser = argparse.ArgumentParser(description='Applies text normalization filters in the order in which filters are specified to the target text file.')
 
@@ -30,3 +61,11 @@ for key, value in args.items():
 		hp["filters"].append(key)
 
 
+# Loading phase
+data = loadRawData( filename )
+
+# Data normalization phase
+df = pd.DataFrame()
+
+# Storage phase 
+writeRawData()
