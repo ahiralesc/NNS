@@ -1,5 +1,3 @@
-#!/bin/python3
-
 from abc import ABCMeta, abstractmethod 
 import re
 import pandas as pd
@@ -33,7 +31,7 @@ class Filter(object):
 
 
     @abstractmethod
-    def apply(self, pdf, column):   # Interfaz para aplicar .
+    def apply(self, pdf, column):   # The main interface
         pass
 
 

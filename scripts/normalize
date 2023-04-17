@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import argparse
-import filters.py
 import pandas as pd
+from normalization import FilterFactory, loadRawData, writeRawData
 
 
 hp = {
@@ -10,36 +10,6 @@ hp = {
 		"source"	: None,
 		"target"	: None
 	}
-
-
-# Helper function: loads a text file to a string.
-def loadRawData( filename ):
-	"""
-		Procedure for loading an UTF-8 text file
-	"""
-	try:
-		with open(filename, 'r', encoding='UTF8') as fp:
-			data = fp.read()
-	except IOError as e:
-		print(e)
-	finally:
-		fp.close()
-	return data
-
-
-
-# Helper function: writes a text string to file.
-#def writeRawData(filename, data):
-#		"""
-#			Procedure for writing to an UTF-8 text file
-#		"""
-#		try:
-#			with open(filename, 'w', encoding='UTF8') as fp:
-#				fp.write(data)
-#		except IOError as e:
-#				print(e)
-#		finally:
-#			fp.close()
 
 
 parser = argparse.ArgumentParser(description='Applies text normalization filters in the order in which filters are specified to the target text file.')
@@ -59,6 +29,11 @@ args = vars(parser.parse_args())
 switches = dict(list(args.items())[:6])
 switches = {k:v for k, v in sorted(switches.items(), key=lambda v: int(v[1]))}
 
+for k, v in switches.items():
+	if v != -1:
+		hp["filters"].append(k)
+
+
 # Extract source and target file name and location
 source = args['s']
 target = args['t']
@@ -67,18 +42,22 @@ if (source == None or target == None):
      print("source and/or target files not specified")
      exit(0);
 
+
 # data loading phase
-pdf = pd.DataFrame()
-pdf["data"] = loadRawData( source )
+pdf = pd.DataFrame( data = { 'data': [ loadRawData(source) ] }, index=[0] )
+
 
 # filter creation phase
 filters = dict()
 filter_factory = FilterFactory()
-for filter_name in hp["filters"]:
-    filters[filter_name] = filter_factory.create(filter_name)
+for name in hp["filters"]:
+    filters[name] = filter_factory.create(name)
+
 
 # Data normalization phase
-#df = pd.DataFrame()
+for _name, _filter in filters.items():
+	pdf = _filter.apply(pdf,"data")
+
 
 # Storage phase 
-#writeRawData()
+writeRawData( target, pdf.loc[0,'data'] )
