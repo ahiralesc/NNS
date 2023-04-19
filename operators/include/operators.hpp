@@ -4,10 +4,6 @@
 #include <cmath>
 
 // All operators assume ISO-Latin 1 encoding
-struct RabinFingerprint
-{
-	
- 
 
 
 /*
