@@ -2,6 +2,7 @@
 
 import argparse
 import pandas as pd
+import os
 from normalization import FilterFactory, loadRawData, writeRawData
 
 
@@ -41,6 +42,11 @@ target = args['t']
 if (source == None or target == None):
      print("source and/or target files not specified")
      exit(0);
+
+
+# Get the list of text files
+files = dict()
+files = os.listdir( target + "*.txt")
 
 
 # data loading phase
