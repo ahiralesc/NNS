@@ -32,7 +32,8 @@ from normalization import FilterFactory, loadRawData, writeRawData
 hp = {
 		"filters" 	: [],
 		"source"	: None,
-		"target"	: None
+		"target"	: None,
+		"verbose"	: False
 	}
 
 
