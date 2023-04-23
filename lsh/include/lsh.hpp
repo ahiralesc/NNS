@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <Eigen/Dense>
 
 class LSH
 {
@@ -16,6 +17,7 @@ class LSH
 
 	/* Shingling size. The default size is 9 words */
 	int k;
+	int next;
 
 	/* The vector of text strings */
 	std::vector<std::string> buffer;
@@ -26,13 +28,16 @@ class LSH
     LSH( std::string _isn, std::string _osn, int _k ) : 
 		isn  { _isn }, 
 		osn  { _osn }, 
-		k { _k } { };
+		k { _k } { }, 
+		next{};
 
     /* Loas the text file into a vector */
     void load_text( );
 
 	/* compute the hash */
 	void process();
+
+	Eigen::Vector3d get_shingle( );
 };
 
 #endif

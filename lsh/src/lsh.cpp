@@ -96,6 +96,30 @@ void LSH::process()
 	}
 }
 
+
+Eigen::Vector4f LSH::get_shingle() 
+{
+	Eigen::Vector4f v(k);
+	bz = buffer.size();
+	s = next;
+	if (s == bf)
+		return NULL;
+	e =((s+k) > bf)? bz: s+k;
+	std::Vector<int> slice(buffer.begin() + s, buffer.begin() +e);
+	for(int i =0; i<= slice.size(); i++)
+		v[i] = buffer[i];
+	
+	if ((s+k)> bz){
+		j = (s+k)-bz;
+		for (int i = e+1; i<= j; i++)
+			v[i] =0;
+	} 
+	next++;
+	return v;
+}
+
+
+
 /**
 *   Parses the text file from stdin or a given file
 */
