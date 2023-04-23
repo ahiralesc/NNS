@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Boost 1.81.0)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 # Header location
 include_directories( include )
@@ -19,3 +20,7 @@ file(GLOB SOURCES "src/*.cpp")
 
 # Executable target
 add_executable(lsh ${SOURCES})
+
+# Target link libraries
+target_link_libraries(lsh Eigen3::Eigen)
+
