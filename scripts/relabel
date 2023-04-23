@@ -1,0 +1,116 @@
+#!/usr/bin/env python
+
+# Copyright Hash-LSH Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+#########################################################################    ##
+#
+# Author: Anthony Hirales Ahuatzin
+# Email : adan.hirales@cetys.mx
+#
+#########################################################################    ##
+
+
+import argparse
+import pandas as pd
+import os
+from normalization import loadRawData, writeRawData
+
+
+hp = {
+		"source"	: None,
+		"target"	: None,
+		"inv_index"	: None,
+		"verbose"	: False
+	}
+
+
+def parseCLA( ):
+	parser = argparse.ArgumentParser(description='Replaces text strings in the source text file with the corresponding code from the inverted dictionary and stores it in the target file')
+
+	parser.add_argument('-s', nargs='?', default=None, type=str, help='The source text file')
+	parser.add_argument('-t', nargs='?', default=None, type=str, help='The target filtered text file')
+	parser.add_argument('-i', nargs='?', default=None, type=str, help-'The inverted index text file')
+	parser.add_argument('-v', nargs='?', default=False, type=bool, help='Verbose output');
+
+	args = vars(parser.parse_args())
+
+	# Extract source and target file name and location
+	hp["source"] = args['s']
+	hp["target"] = args['t']
+	hp["inv_index"] = args["i"]
+	hp["verbose"] = args['v']
+
+	if (hp["source"] == None or hp["target"] == None):
+		print("source and/or target files not specified")
+		exit(0);
+
+
+
+def loadSource( ):
+	files = list()
+	for file in os.listdir( hp["source"] ):
+		key, val = file.split(".")
+		if val == "txt" or val == "TXT":
+			files.append( file )
+	return files
+
+
+def load_inverted_index( ):
+	inv_index = pd.read_csv( hp["source"], encoding='utf8' )
+	inv_index = inv_index.set_index(0)
+	inv_index = inv_index.rename(columns={1:'index'})
+	return inv_index
+
+
+
+def relabel( source, target, inv_index  ):
+	relabeled_source = list()
+
+	# data loading phase
+	data = loadRawData( source )
+
+	# tokenize data
+	data = data.split(" ")
+
+	# Data normalization phase
+	for token in data:
+		if token in inv_index:
+			relabeled_source.append( inv_index.loc[token, "index"])
+		else
+			relabeled_source.append( "None" )
+
+	# Storage phase
+	writeRawData( target, pdf.loc[0,'data'] )
+	
+
+
+# main thread of execution
+# 1. parser command line arguments
+parseCLA( )
+
+# 2. load the file dataset 
+files = loadSource()
+
+# 3. load the invertex index
+in_idex = load_inverted_index()
+
+# 3. normalize files in the dataset
+for file in files:
+	source = hp["source"] + file
+	target = hp["target"] + file
+	if hp['verbose'] == True :
+		print("Normalizing {}, writting output to {}".format(file, target))
+	relabel( source, target, inv_index )
