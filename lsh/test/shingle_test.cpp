@@ -5,28 +5,40 @@
 #include <bitset>
 #include <lsh.hpp>
 #include <Eigen/Dense>
+
 using namespace std;
 
 BOOST_AUTO_TEST_SUITE(ShingleTest)
 
 BOOST_AUTO_TEST_CASE(Shingle_test)
 {
+	int k = 9;
 	bitset<3> state;
-	LSH lsh{};
+	LSH lsh{"../data/shingle_test.txt", " ", k};
+ 	lsh.load_text();
+
 	state.reset();
 
-	Eigen::Vector4f v = lsh.get_shingle();
-	Eigen::Vector4f u << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+	Eigen::VectorXf v = lsh.get_shingle();
+	Eigen::VectorXf u(k);
+	u << 1, 2, 3, 4, 5, 6, 7, 8, 9;
+	
 	if (u == v)
 		state.set(0);
+	
 	v = lsh.get_shingle();
-	Eigen::Vector4f u << 2, 3, 4, 5, 6, 7, 8, 9, 10;
+	u << 2, 3, 4, 5, 6, 7, 8, 9, 10;
+	
 	if (u ==v)
 		state.set(1);
+	
 	v = lsh.get_shingle();
-	Eigen::Vector4f u << 3, 4, 5, 6, 7, 8, 9, 10, 0;
+	u << 3, 4, 5, 6, 7, 8, 9, 10, 0;
+	
 	if (u == v)
 		state.set(2);
 
 	BOOST_CHECK_EQUAL(state.all(), true);
 }
+
+BOOST_AUTO_TEST_SUITE_END()
