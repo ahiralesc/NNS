@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 
     LSH lsh{ _isn, _osn, _k }; 
     lsh.load_text();
-	lsh.process();
+	//lsh.process();
     
     return 0;
 }
@@ -86,33 +86,38 @@ int main(int argc, char** argv)
 
 void LSH::process()
 {
-	int bz  = buffer.size(), j{};
+	/*int bz  = buffer.size(), j{};
 	for(int i = 0; i <= bz; i += k){
 		j = ( (i + k) > bz )? i + (bz - i) : i + k;
 		std::vector<string> slice(buffer.begin() + i, buffer.begin() + j);
 		for(auto wstr : slice)
 			std::cout << wstr << " ";
 		std::cout << std::endl;
-	}
+	}*/
 }
 
 
-Eigen::Vector4f LSH::get_shingle() 
+Eigen::VectorXf LSH::get_shingle() 
 {
-	Eigen::Vector4f v(k);
+	int bz{}, s{}, e{};
+
+	Eigen::VectorXf v(k);
 	bz = buffer.size();
 	s = next;
-	if (s == bf)
-		return NULL;
-	e =((s+k) > bf)? bz: s+k;
-	std::Vector<int> slice(buffer.begin() + s, buffer.begin() +e);
-	for(int i =0; i<= slice.size(); i++)
-		v[i] = buffer[i];
+	if (s == bz) {
+		// a zero size vector is used as the stoppin criterion
+		v.resize(0);
+		return v;
+	}
+	e =( (s+k) > bz )? bz: s + k;
+	std::vector<float> slice(buffer.begin() + s, buffer.begin() + e);
+	for(int i = 0; i <= slice.size(); i++)
+		v(i) = buffer[i];
 	
-	if ((s+k)> bz){
-		j = (s+k)-bz;
-		for (int i = e+1; i<= j; i++)
-			v[i] =0;
+	if ( (s+k) > bz ) {
+		int j = (s+k) - bz;
+		for (int i = e+1; i <= j; i++)
+			v(i) = 0;
 	} 
 	next++;
 	return v;
@@ -125,7 +130,7 @@ Eigen::Vector4f LSH::get_shingle()
 */
 void LSH::load_text( )
 {
-	string input_line{}, word{};
+	string input_line{}, str{};
 
 	// Parse the input by opening the file using a buffered reader
 	if( !isn.empty() ) {
@@ -138,14 +143,14 @@ void LSH::load_text( )
 		}
 
 		// loads word strings from a text file
-		while(_file >> word) 
-			buffer.push_back(word);
+		while(_file >> str) 
+			buffer.push_back(std::stof(str));
 		_file.close();
 	} else {
         // Parse the input by processing the standard input
         while(cin) {
-        	while(getline( cin, word, ' ' )) 
-				buffer.push_back( word );
+        	while(getline( cin, str, ' ' )) 
+				buffer.push_back(std::stof(str));
         }
 
         fflush( stdout );

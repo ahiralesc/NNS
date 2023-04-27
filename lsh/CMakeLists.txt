@@ -22,7 +22,7 @@ file(GLOB SOURCES "src/*.cpp")
 add_executable(lsh ${SOURCES})
 
 # Target link libraries
-target_link_libraries(lsh Eigen3::Eigen)
+target_link_libraries(Eigen3::Eigen)
 
 enable_testing()
 
@@ -47,7 +47,7 @@ foreach(testSrc ${TEST_SRCS})
 	add_dependencies(${testName} lsh)
 
 	# link to Boost libraries AND your targets and dependencies
-	target_link_libraries(${testName} ${Boost_LIBRARIES} Eigen3::Eigen )
+	target_link_libraries(${testName} ${Boost_LIBRARIES} Eigen3::Eigen)
 
 	# Location of the test binaries 
 	set_target_properties(${testName} PROPERTIES 

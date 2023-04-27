@@ -20,7 +20,7 @@ class LSH
 	int next;
 
 	/* The vector of text strings */
-	std::vector<std::string> buffer;
+	std::vector<float> buffer;
 
     public :
 
@@ -28,8 +28,8 @@ class LSH
     LSH( std::string _isn, std::string _osn, int _k ) : 
 		isn  { _isn }, 
 		osn  { _osn }, 
-		k { _k } { }, 
-		next{};
+		k { _k },
+		next { 0 } {}; 
 
     /* Loas the text file into a vector */
     void load_text( );
@@ -37,7 +37,7 @@ class LSH
 	/* compute the hash */
 	void process();
 
-	Eigen::Vector3d get_shingle( );
+	Eigen::VectorXf get_shingle( );
 };
 
 #endif
