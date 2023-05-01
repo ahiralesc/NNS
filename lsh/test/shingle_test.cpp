@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE(Shingle_test)
 {
 	int k = 9;
 	bitset<3> state;
-	LSH lsh{"../data/shingle_test.txt", " ", k};
+	LSH lsh{"../../../data/shingle_test.txt", " ", k};
  	lsh.load_text();
 
 	state.reset();
@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(Shingle_test)
 	
 	v = lsh.get_shingle();
 	u << 2, 3, 4, 5, 6, 7, 8, 9, 10;
-	
+
 	if (u ==v)
 		state.set(1);
 	
@@ -37,6 +37,8 @@ BOOST_AUTO_TEST_CASE(Shingle_test)
 	
 	if (u == v)
 		state.set(2);
+
+	std::cout << v;
 
 	BOOST_CHECK_EQUAL(state.all(), true);
 }

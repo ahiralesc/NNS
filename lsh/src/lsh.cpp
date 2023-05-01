@@ -78,7 +78,6 @@ int main(int argc, char** argv)
 
     LSH lsh{ _isn, _osn, _k }; 
     lsh.load_text();
-	//lsh.process();
     
     return 0;
 }
@@ -109,17 +108,22 @@ Eigen::VectorXf LSH::get_shingle()
 		v.resize(0);
 		return v;
 	}
-	e =( (s+k) > bz )? bz: s + k;
+
+	e =( (s+k) > bz )? bz : s + k;
 	std::vector<float> slice(buffer.begin() + s, buffer.begin() + e);
-	for(int i = 0; i <= slice.size(); i++)
-		v(i) = buffer[i];
+	for(int i = 0; i < slice.size(); i++) 
+		v(i) = slice[i];
+	
 	
 	if ( (s+k) > bz ) {
 		int j = (s+k) - bz;
-		for (int i = e+1; i <= j; i++)
+		int e = v.size() - j;
+		for (int i = e; i <e+j; i++)
 			v(i) = 0;
 	} 
+
 	next++;
+	
 	return v;
 }
 
@@ -143,7 +147,7 @@ void LSH::load_text( )
 		}
 
 		// loads word strings from a text file
-		while(_file >> str) 
+		while( _file >> str ) 
 			buffer.push_back(std::stof(str));
 		_file.close();
 	} else {
