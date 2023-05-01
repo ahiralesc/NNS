@@ -37,6 +37,7 @@ class LSH
 	/* compute the hash */
 	void process();
 
+	/* gets a shingle of size k */
 	Eigen::VectorXf get_shingle( );
 };
 
