@@ -31,7 +31,7 @@
 #
 
 # Evaluate if the number of given arguments are correct:q
-[ $# < 3 ] && {echo "Usage: $0 source_dictionary target_dictionary"; exit 1; }
+[ $# -eq 0 ] && { echo "Usage: $0 source_dictionary target_dictionary"; exit 1; }
 
 # Assign integer labels to the strings in the dictionary
-cat $1 | awk 'BEGIN { count=0 } { count++; print $0 "," count }' > $2
+cat $1 | awk 'BEGIN { count=0 } { count++; print $0 "," count }' >> $2

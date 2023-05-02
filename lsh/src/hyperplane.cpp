@@ -21,6 +21,5 @@ void Hyperplane::randomHyperplanes( )
 	// Create the Gaussian matrix wuth N(0,1). Values are between [-1,1]
 	Eigen::MatrixXf N = Rand::balanced<MatrixXf>(k,h, urng);
 
-	
 
 }

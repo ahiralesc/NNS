@@ -42,7 +42,7 @@ def parseCLA( ):
 
 	parser.add_argument('-s', nargs='?', default=None, type=str, help='The source text file')
 	parser.add_argument('-t', nargs='?', default=None, type=str, help='The target filtered text file')
-	parser.add_argument('-i', nargs='?', default=None, type=str, help-'The inverted index text file')
+	parser.add_argument('-i', nargs='?', default=None, type=str, help='The inverted index text file')
 	parser.add_argument('-v', nargs='?', default=False, type=bool, help='Verbose output');
 
 	args = vars(parser.parse_args())
@@ -89,7 +89,7 @@ def relabel( source, target, inv_index  ):
 	for token in data:
 		if token in inv_index:
 			relabeled_source.append( inv_index.loc[token, "index"])
-		else
+		else:
 			relabeled_source.append( "None" )
 
 	# Storage phase
@@ -108,7 +108,7 @@ files = loadSource()
 in_idex = load_inverted_index()
 
 # 3. normalize files in the dataset
-for file in files:
+#for file in files:
 	source = hp["source"] + file
 	target = hp["target"] + file
 	if hp['verbose'] == True :

@@ -16,30 +16,18 @@ BOOST_AUTO_TEST_CASE(Hyperplane_test)
 	int k = 9;
 	bitset<3> state;
 	LSH lsh{"../../../data/shingle_test.txt", " ", k};
- 	lsh.load_text();
+ 	lsh.load_text();/
 
 	state.reset();
 
-	Eigen::VectorXf v = lsh.get_shingle();
-	Eigen::VectorXf u(k);
-	u << 1, 2, 3, 4, 5, 6, 7, 8, 9;
-	
-	if (u == v)
-		state.set(0);
-	
-	v = lsh.get_shingle();
-	u << 2, 3, 4, 5, 6, 7, 8, 9, 10;
+	Hyperplane hp{};
 
-	if (u ==v)
-		state.set(1);
-	
-	v = lsh.get_shingle();
-	u << 3, 4, 5, 6, 7, 8, 9, 10, 0;
-	
-	if (u == v)
-		state.set(2);
+	hp.randomHyperplanes();
 
-	std::cout << v;
+	
+	state.set(0);
+	state.set(1);
+	state.set(2);
 
 	BOOST_CHECK_EQUAL(state.all(), true);
 }

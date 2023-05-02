@@ -30,7 +30,7 @@
 if [ -d "$1" ]; then
 	# Scan the corpora subdirectories and concatenate all TXT files
 	for k in $(ls -l $1 | grep '^d' | awk  '{OFS=" "; print $9; }'); do
-		
+		echo "Archivo $k "
 		source_file=$1$k/*.txt
 		target_file=$2$k'_corpora.txt'
 		if [ -f /tmp/$target_file ]; then
