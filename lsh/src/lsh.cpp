@@ -77,6 +77,7 @@ int main(int argc, char** argv)
     parseCLA( argc, argv );
 
     LSH lsh{ _isn, _osn, _k }; 
+
     lsh.load_text();
     
     return 0;

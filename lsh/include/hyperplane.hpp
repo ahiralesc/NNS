@@ -13,6 +13,9 @@ int nhyperplanes;
 // Buckets
 std::unordered_map<std::string, std::vector<int>> hash_map;
 
+public:
+	
+	void randomHyperplanes();
 
 };
 
