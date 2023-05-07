@@ -7,15 +7,15 @@
 
 class Hyperplane : public LSH {
 
-// Number of hyperplanes
-int nhyperplanes;
+	// Number of hyperplanes
+	int nhyperplanes;
 
-// Buckets
-std::unordered_map<std::string, std::vector<int>> hash_map;
+	// Buckets
+	std::unordered_map<std::string, std::vector<int>> hash_map;
 
-public:
+	public:
 	
-	void randomHyperplanes();
+	void Hyperplane();
 
 };
 

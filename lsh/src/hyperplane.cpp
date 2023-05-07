@@ -4,9 +4,11 @@
 #include <EigenRand/EigenRand>
 #include <iostream>
 
-
-void 
-
+/**
+*
+* Class constructor
+*
+*/
 void Hyperplane::randomHyperplanes( ) 
 {
 	// Estimate the number of points.
@@ -20,6 +22,18 @@ void Hyperplane::randomHyperplanes( )
 
 	// Create the Gaussian matrix wuth N(0,1). Values are between [-1,1]
 	Eigen::MatrixXf N = Rand::balanced<MatrixXf>(k,h, urng);
+
+}
+
+
+void Hyperplane::preprocess()
+{
+
+}
+
+
+void Hyperplane::search()
+{
 
 
 }

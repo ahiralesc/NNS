@@ -32,6 +32,9 @@ std::string _osn{};
 /* Parsed shingling size */
 int _k{9};
 
+/* User provided probabilities */
+float _P1{}, _P2{};
+
 using namespace std;
 
 /**
@@ -55,12 +58,18 @@ void parseCLA(int argc, char** argv)
 
 		TCLAP::ValueArg<int> k("s", "length", "The word shingling length. By default 9", false, 9, "int");
 		cmd.add( k );
+		TCLAP::ValueArg<float> P1("P1", "probability_1", "Pr_H[ h(q) = h(v) ] ≥ P1", false, 0.8, "float");
+		cmd.add( P1 );
+		TCLAP::ValueArg<float> P2("P2", "probability_2", "Pr_H[ h(q) = h(v) ] ≤ P2", false, 0.2. "float");
+		cmd.add( P2 );
 
 		// Parse the argumnets
 		cmd.parse( argc, argv );
 		_isn = ifn.getValue();
 		_osn = ofn.getValue();
 		_k = k.getValue()-1;
+		_P1 = P1.getValue();
+		_P2 = P2.getValue();
 
 	}catch(TCLAP::ArgException &e) {
             cerr << "Error: " << e.error() << " for argument " << e.argId() << endl;
@@ -76,24 +85,11 @@ int main(int argc, char** argv)
 {
     parseCLA( argc, argv );
 
-    LSH lsh{ _isn, _osn, _k }; 
+    LSH lsh{ _isn, _osn, _k, _P1, _P2 }; 
 
     lsh.load_text();
     
     return 0;
-}
-
-
-void LSH::process()
-{
-	/*int bz  = buffer.size(), j{};
-	for(int i = 0; i <= bz; i += k){
-		j = ( (i + k) > bz )? i + (bz - i) : i + k;
-		std::vector<string> slice(buffer.begin() + i, buffer.begin() + j);
-		for(auto wstr : slice)
-			std::cout << wstr << " ";
-		std::cout << std::endl;
-	}*/
 }
 
 
@@ -131,9 +127,9 @@ Eigen::VectorXf LSH::get_shingle()
 
 
 /**
-*   Parses the text file from stdin or a given file
+*   Parses the text file from stdin or from a file
 */
-void LSH::load_text( )
+void LSH::load_sequence( )
 {
 	string input_line{}, str{};
 

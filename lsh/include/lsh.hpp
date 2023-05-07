@@ -16,8 +16,10 @@ class LSH
     std::string osn; 
 
 	/* Shingling size. The default size is 9 words */
-	int k;
-	int next;
+	int k{}, next{};
+
+	/* User provided probabilities */
+	float P1{}, P2{};
 
 	/* The vector of text strings */
 	std::vector<float> buffer;
@@ -25,17 +27,23 @@ class LSH
     public :
 
     /* class constructor */
-    LSH( std::string _isn, std::string _osn, int _k ) : 
+    LSH( std::string _isn, std::string _osn, int _k, float _P1, float _P2 ) : 
 		isn  { _isn }, 
 		osn  { _osn }, 
 		k { _k },
+		P1 { _P1 },
+		P2 { _P2 },
 		next { 0 } {}; 
 
-    /* Loas the text file into a vector */
-    void load_text( );
+    /* Load data. It is assumed that it has been previously transformed to 
+	   an integer sequence */
+    void load_sequence( );
 
 	/* compute the hash */
-	void process();
+	virtual void preprocess() = 0;
+
+	/* searches for string */
+	virtual void search() = 0;
 
 	/* gets a shingle of size k */
 	Eigen::VectorXf get_shingle( );
