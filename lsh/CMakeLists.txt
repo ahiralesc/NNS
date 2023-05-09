@@ -22,7 +22,7 @@ include_directories(include /usr/local/include )
 file(GLOB SOURCES "src/*.cpp")
 
 # Executable target
-add_executable(lsh ${SOURCES})
+add_executable(nns ${SOURCES})
 
 # Target link libraries
 target_link_libraries(Eigen3::Eigen)
@@ -50,7 +50,7 @@ foreach(testSrc ${TEST_SRCS})
 	add_executable(${testName} ${testSrc})
 
 	# Add dependency
-	add_dependencies(${testName} lsh)
+	# add_dependencies(${testName} lsh_lib)
 
 	# link to Boost libraries AND your targets and dependencies
 	target_link_libraries(${testName} ${Boost_LIBRARIES} Eigen3::Eigen lsh_lib)
