@@ -9,20 +9,23 @@ class LSH
 {
     private :
     
-	/* Shingling size. The default size is 9 words */
-	unsigned int k{}, next{};
+	/* Used by get_shingle */
+	unsigned int next{};
 
 	protected:
 
 	/* The vector of text strings */
 	std::vector<unsigned int>& buffer;
 
+	/* Shingle size (shng_sz) */
+	unsigned int shng_sz{};
+
     public :
 
     /* class constructor */
-    LSH( std::vector<unsigned int> & _buffer, unsigned int _k ) : 
+    LSH( std::vector<unsigned int> & _buffer, unsigned int _shng_sz ) : 
 		buffer{ _buffer },
-		k { _k },
+		shng_sz { _shng_sz },
 		next { 0 } {}; 
 
 	/* compute the hash */
@@ -31,7 +34,7 @@ class LSH
 	/* searches for string */
 	virtual void search() = 0;
 
-	/* gets a shingle of size k */
+	/* gets a shingle of size shng_sz */
 	Eigen::VectorXf get_shingle( );
 };
 

@@ -24,7 +24,7 @@ Eigen::VectorXf LSH::get_shingle()
 {
 	int bz{}, s{}, e{};
 
-	Eigen::VectorXf v(k);
+	Eigen::VectorXf v(shng_sz);
 	bz = buffer.size();
 	s = next;
 	if (s == bz) {
@@ -34,16 +34,16 @@ Eigen::VectorXf LSH::get_shingle()
 	}
 
 	// Extract a subvector from the input sequence
-	e =( (s+k) > bz )? bz : s + k;
+	e = ( (s + shng_sz) > bz )? bz : s + shng_sz;
 	std::vector<unsigned int> slice(buffer.begin() + s, buffer.begin() + e);
 	for(int i = 0; i < slice.size(); i++) 
 		v(i) = slice[i];
 	
 	// Add zero padding if the last vector size is less than k.	
-	if ( (s+k) > bz ) {
-		int j = (s+k) - bz;
+	if ( ( s + shng_sz ) > bz ) {
+		int j = ( s + shng_sz ) - bz;
 		int e = v.size() - j;
-		for (int i = e; i <e+j; i++)
+		for (int i = e; i < e + j; i++)
 			v(i) = 0;
 	} 
 

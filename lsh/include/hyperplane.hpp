@@ -19,8 +19,8 @@ class Hyperplane : public LSH {
 
 	public:
 	
-	Hyperplane(std::vector<unsigned int> & _buffer, unsigned int _k, float _P1, float _P2) : 
-		LSH{ _buffer, _k },
+	Hyperplane(std::vector<unsigned int> & buffer, unsigned int shng_sz, float _P1, float _P2) : 
+		LSH{ buffer, shng_sz },
 		P1{ _P1 },
 		P2{ _P2 } {};
 
