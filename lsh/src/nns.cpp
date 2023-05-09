@@ -35,7 +35,7 @@ unsigned short _k{9};
 	Let P1 be the probability of Pr_H[ h(q) = h(v) ] ≥ P1 and
 	Let P2 be the probability of "Pr_H[ h(q) = h(v) ] ≤ P2, such that
 	P1 > P2. */
-unsigned float _P1{}, _P2{};
+float _P1{}, _P2{};
 
 
 
@@ -64,9 +64,9 @@ void parseCLA(int argc, char** argv)
 
 		TCLAP::ValueArg<unsigned int> k("s", "length", "The word shingling length. By default 9", false, 9, "int");
 		cmd.add( k );
-		TCLAP::ValueArg<unsigned float> P1("P1", "probability_1", "Pr_H[ h(q) = h(v) ] ≥ P1", false, 0.8, "float");
+		TCLAP::ValueArg<float> P1("P1", "probability_1", "Pr_H[ h(q) = h(v) ] ≥ P1", false, 0.8, "float");
 		cmd.add( P1 );
-		TCLAP::ValueArg<unsigned float> P2("P2", "probability_2", "Pr_H[ h(q) = h(v) ] ≤ P2", false, 0.2, "float");
+		TCLAP::ValueArg<float> P2("P2", "probability_2", "Pr_H[ h(q) = h(v) ] ≤ P2", false, 0.2, "float");
 		cmd.add( P2 );
 
 		// Parse the argumnets
@@ -132,9 +132,11 @@ int main(int argc, char** argv)
 
 	load_sequence( buffer );
 
-    LSH nns = new Hyperplane{ _k, _P1, _P2 }; 
+	Hyperplane hyp{ buffer, _k, _P1, _P2};
 
-	nns->preprocess( );
-    
+	LSH *heuristic = &hyp;
+
+	heuristic->preprocess();
+
     return 0;
 }
