@@ -18,7 +18,7 @@ limitations under the License.
 
 
 using namespace std;
-
+//
 
 Eigen::VectorXf LSH::get_shingle() 
 {

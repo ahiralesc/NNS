@@ -8,14 +8,20 @@
 
 class Hyperplane : public LSH {
 
-	/* Let k ans l be the number of hyperplanes and the number of trails */
-	int k{}, l{};
+	/* Let k = log_{1/P2}(n), thus k = log_{10}(n) / log_{10}(1/P2) */
+	unsigned int k{};
+
+	/* Let l be the total number of buckets, with l = n^{p} */
+	unsigned int l{};
 
 	/* The user provided probabilities */
 	float P1{}, P2{};
 
-	// Let B be the map of buckets corresponding to g_l trail.
+	/* Let B be the map of buckets corresponding to g_l trail. */
 	std::unordered_map<std::string, std::vector<int>> hash_map;
+
+	/* List of normal matrices (lnm) */
+//	std::list<std::reference_wrapper<Eigen::MatrixXf>> lnm;
 
 	public:
 	

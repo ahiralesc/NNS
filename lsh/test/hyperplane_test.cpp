@@ -16,6 +16,7 @@ string isn = "../../../data/sequence.txt";
 
 /**
 *   Parses the text file from stdin or from a file
+*
 */
 void load_sequence( std::vector<unsigned int> &buffer  )
 {
