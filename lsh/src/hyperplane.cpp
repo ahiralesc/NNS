@@ -3,6 +3,7 @@
 #include <iostream>
 #include <bitset>
 #include <random>
+#include <vector>
 #include "hyperplane.hpp"
 
 
@@ -90,18 +91,46 @@ void Hyperplane::preprocess()
 }
 
 
-void Hyperplane::search()
+void Hyperplane::search( )
 {
 	// Helper lambda function to print key-value pairs
-    auto print_key_value = [](const auto& key, const auto& value)
+/*    auto print_key_value = [](const auto& key, const auto& value)
     {
         std::cout << "Key:[" << key << "] Value:[" << value << "]\n";
-    };
+    };*/
 	
 	/* Print partitioned space */
-	for( HPN n : L ) {
+/*	for( HPN n : L ) {
 		std::cout << "Primera tabla ----> " << std::endl;
 		for( const std::pair<const std::string, std::vector<int>*>& T : n.T )
 			print_key_value( T.first, T.second );
+	} */
+	
+	std::vector<std::bitset<shng_sz>> buckets;
+	/* Preparation of the input vector */
+	Eigen::VectorXf v(9);
+	v << 74, 320, 452, 940, 864, 54, 613, 106, 180;
+
+	/* Generation of the binary strings */
+	for( HPN n : L) {
+		Eigen::VectorXf k = n.H * v;
+		std::string key = encode( k );
+		std::bitset<shng_sz> bv{key};
+		buckets.push_back( bv );
 	}
+
+	/* Compute the Hamming distance */
+	
+
+
+/* 
+	1. lectura del vector numerico.
+	2. producto punto por por las matrices H y generacion de las cadenas binarias}
+	3. transformacion a bitset y calculo de la distancia hamming
+	4. concatenacion de las listas
+	5. estimacion de la distancia euclidiana y seleccion de los k menores elementos
+	6 impresion de los k menores elementos
+*/
+
+
 }
