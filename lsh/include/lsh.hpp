@@ -22,20 +22,23 @@ class LSH
 
     public :
 
-    /* class constructor */
+    /* Class constructor */
     LSH( std::vector<unsigned int> & _buffer, unsigned int _shng_sz ) : 
 		buffer{ _buffer },
 		shng_sz { _shng_sz },
 		next { 0 } {}; 
 
-	/* compute the hash */
+	/* Maps a set of points to a set of hash tables */
 	virtual void preprocess() = 0;
 
-	/* searches for string */
+	/* Searches a string in the set of hash tables */
 	virtual void search() = 0;
 
 	/* gets a shingle of size shng_sz */
-	Eigen::VectorXf get_shingle( );
+	Eigen::VectorXf get_shingle();
+
+	/* resets indexes to the start of the buffer */
+	void reset();
 };
 
 #endif

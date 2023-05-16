@@ -4,7 +4,22 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <string>
+#include <vector>
+#include <Eigen/Dense>
+
 #include "lsh.hpp"
+
+
+struct HPN {
+	/* Let H be a random normal matrix */
+	Eigen::MatrixXf H;
+
+	/* Let T be the hyperplane partitioned space of points.
+	   Only the starting position of the shingled point is stores */
+	std::unordered_map< std::string, std::vector<int> *> T;
+};
+
 
 class Hyperplane : public LSH {
 
@@ -17,11 +32,14 @@ class Hyperplane : public LSH {
 	/* The user provided probabilities */
 	float P1{}, P2{};
 
-	/* Let B be the map of buckets corresponding to g_l trail. */
-	std::unordered_map<std::string, std::vector<int>> hash_map;
+	/* Let L be the normal matrix H and the partitiones set of points T*/
+	std::vector<HPN> L;
 
-	/* List of normal matrices (lnm) */
-//	std::list<std::reference_wrapper<Eigen::MatrixXf>> lnm;
+	/* Vector to binary string encoding */
+	std::string encode( Eigen::VectorXf & );
+
+	/* Partitions the n-dimensional point space */
+	std::unordered_map<std::string, std::vector<int>*>  partition(Eigen::MatrixXf &);
 
 	public:
 	

@@ -1,11 +1,63 @@
 #include <cmath>
 #include <Eigen/Dense>
 #include <iostream>
+#include <bitset>
+#include <random>
 #include "hyperplane.hpp"
+
+
+std::string Hyperplane::encode( Eigen::VectorXf &v ) 
+{
+	std::string str{};
+
+	for(auto x : v) {            
+		if( x >= 0 ) 
+			str.append("1");
+		else
+			str.append("0");
+	}
+
+	return str;
+}
+
+
+std::unordered_map<std::string, std::vector<int>*>  Hyperplane::partition( Eigen::MatrixXf &H)
+{
+	std::unordered_map<std::string, std::vector<int>*> T;
+
+	/* Shingle offset in file */
+	int offset{};
+
+	reset();
+
+	/* Load points (shingles) and partition the space with the random vectors */
+	do {
+		Eigen::VectorXf v = get_shingle();
+		if( v.size() == 0 )
+			 break;
+		Eigen::VectorXf k = H * v;
+		/* Dimensionality reduction via the binary encoding */
+		std::string key = encode( k );
+
+		/* Partition the R^n space */
+		if( T.find( key ) == T.end() )
+			T[key] = new std::vector<int>( {offset} );
+		else
+			T[key]->push_back( offset );
+
+		offset++;
+	} while(true);
+
+	return T;
+}
+
 
 void Hyperplane::preprocess()
 {
-	/* */
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> dis(-1, 1);
+
 	std::cout << "Buffer size : " << buffer.size( ) << std::endl;
 	std::cout << "Shingle size : " << shng_sz << std::endl;
 
@@ -25,27 +77,31 @@ void Hyperplane::preprocess()
 	l = ceil( pow(n, p) );
 	std::cout << "L : " << l << std::endl;
 
-	/* A random uniform hyperplane matrix */
-    Eigen::MatrixXf H = Eigen::MatrixXf::Random(k,shng_sz);
+	/* Create L random uniform matrices */
+	for(int i=0; i<l; i++) {
+		HPN n;
+		n.H = Eigen::MatrixXf::Zero(k, shng_sz).unaryExpr([&](float dummy){return dis(gen);});
+		std::cout << "\nContenido de H " << std::endl;
+		std::cout << n.H;
 
-	std::cout << "La matrix N es : " << H << std::endl;
-
-	/*
-	1. obtener el buffer 
-	2. do {
-		 Eigen::VectorXf v = get_shingle();
-		 if v.size() != 0
-		    Producto punto
-			Representacion binaria
-		}while(true);
-    3. 
-	*/
-
+		n.T = partition( n.H );
+		L.push_back(n);
+	}
 }
 
 
 void Hyperplane::search()
 {
-
-
+	// Helper lambda function to print key-value pairs
+    auto print_key_value = [](const auto& key, const auto& value)
+    {
+        std::cout << "Key:[" << key << "] Value:[" << value << "]\n";
+    };
+	
+	/* Print partitioned space */
+	for( HPN n : L ) {
+		std::cout << "Primera tabla ----> " << std::endl;
+		for( const std::pair<const std::string, std::vector<int>*>& T : n.T )
+			print_key_value( T.first, T.second );
+	}
 }

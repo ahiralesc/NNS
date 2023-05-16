@@ -51,3 +51,8 @@ Eigen::VectorXf LSH::get_shingle()
 	
 	return v;
 }
+
+void LSH::reset()
+{
+	next = 0;
+}

@@ -65,6 +65,7 @@ BOOST_AUTO_TEST_CASE(Hyperplane_test)
 	Hyperplane hp{ buffer, k, P1, P2}; 
 
 	hp.preprocess();
+	hp.search();
 
 	
 	state.set(0);
