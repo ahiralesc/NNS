@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include <Eigen/Dense>
+#include <boost/dynamic_bitset.hpp>
 
 #include "lsh.hpp"
 
@@ -40,6 +41,9 @@ class Hyperplane : public LSH {
 
 	/* Partitions the n-dimensional point space */
 	std::unordered_map<std::string, std::vector<int>*>  partition(Eigen::MatrixXf &);
+
+	/* Computes the Hamming distance using boost::dynamic_bitset */
+	int hamming( boost::dynamic_bitset<unsigned char>&, boost::dynamic_bitset<unsigned char> &);
 
 	public:
 	
