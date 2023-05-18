@@ -90,6 +90,7 @@ void Hyperplane::preprocess()
 
 int Hyperplane::hamming(boost::dynamic_bitset<unsigned char> &p, boost::dynamic_bitset<unsigned char> &q) 
 {
+	std::cout << p << " : " << q << " dist : " << (p^q).count();
 	return  (p ^ q).count();
 }
 
@@ -120,4 +121,6 @@ void Hyperplane::search( )
 		}
 		buckets.push_back(min_bucket);
 	}
+
+	/* concatenate the buckets with the minimum hamming distance */
 }
