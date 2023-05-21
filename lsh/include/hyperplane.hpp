@@ -45,6 +45,7 @@ class Hyperplane : public LSH {
 	/* Computes the Hamming distance using boost::dynamic_bitset */
 	int hamming( boost::dynamic_bitset<unsigned char>&, boost::dynamic_bitset<unsigned char> &);
 
+
 	public:
 	
 	Hyperplane(std::vector<unsigned int> & buffer, unsigned int shng_sz, float _P1, float _P2) : 
@@ -55,6 +56,9 @@ class Hyperplane : public LSH {
 	void preprocess();
 
 	void search();
+
+	 std::vector<std::vector<unsigned int>> &get_vectors(std::vector<unsigned int> &);
+
 };
 
 #endif

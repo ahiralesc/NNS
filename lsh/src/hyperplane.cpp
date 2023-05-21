@@ -124,3 +124,21 @@ void Hyperplane::search( )
 
 	/* concatenate the buckets with the minimum hamming distance */
 }
+
+
+std::vector<std::vector<unsigned int>>& Hyperplane::get_vectors( std::vector<unsigned int> &index)
+{
+	/* Create an empty list of vectors of size zero */
+	std::vector<std::vector<unsigned int>> V;
+	for(int i=0; i<shng_sz; i++) {
+		std::vector<unsigned int> vi;
+		V.push_back(vi);
+	}
+
+	/* Iterate over the index list and parse the buffer */
+	std::vector<unsigned int> &t = buffet[0]; 
+	/* Let i be a value in index, got to buffer[i] and validate the offset
+	   and extract shng_sz integers from buffer and push them to t */
+	
+	return V;
+}
