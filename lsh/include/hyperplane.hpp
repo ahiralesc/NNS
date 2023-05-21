@@ -18,7 +18,7 @@ struct HPN {
 
 	/* Let T be the hyperplane partitioned space of points.
 	   Only the starting position of the shingled point is stores */
-	std::unordered_map< std::string, std::vector<int> *> T;
+	std::unordered_map< std::string, std::vector<int>* > T;
 };
 
 
@@ -43,7 +43,7 @@ class Hyperplane : public LSH {
 	std::unordered_map<std::string, std::vector<int>*>  partition(Eigen::MatrixXf &);
 
 	/* Computes the Hamming distance using boost::dynamic_bitset */
-	int hamming( boost::dynamic_bitset<unsigned char>&, boost::dynamic_bitset<unsigned char> &);
+	//int hamming( boost::dynamic_bitset<unsigned char>&, boost::dynamic_bitset<unsigned char> &);
 
 
 	public:
@@ -58,6 +58,8 @@ class Hyperplane : public LSH {
 	void search();
 
 	 std::vector<std::vector<unsigned int>> &get_vectors(std::vector<unsigned int> &);
+
+	 int hamming( boost::dynamic_bitset<unsigned char>&, boost::dynamic_bitset<unsigned char> &)    ;
 
 };
 

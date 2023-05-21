@@ -1,6 +1,7 @@
 #include <cmath>
 #include <iostream>
 #include <random>
+#include <set>
 #include "hyperplane.hpp"
 
 
@@ -85,19 +86,20 @@ void Hyperplane::preprocess()
 		n.T = partition( n.H );
 		L.push_back(n);
 	}
+	std::cout << "Termine la fase de preproceamiento " << std::endl;
 }
 
 
 int Hyperplane::hamming(boost::dynamic_bitset<unsigned char> &p, boost::dynamic_bitset<unsigned char> &q) 
 {
-	std::cout << p << " : " << q << " dist : " << (p^q).count();
 	return  (p ^ q).count();
 }
 
 
 void Hyperplane::search( )
 {
-	std::vector<std::string> buckets;
+	std::set<int> points;
+	
 	/* Preparation of the input vector */
 	Eigen::VectorXf v(9);
 	v << 74, 320, 452, 940, 864, 54, 613, 106, 180;
@@ -119,10 +121,17 @@ void Hyperplane::search( )
 				min_bucket = T.first;
 			}
 		}
-		buckets.push_back(min_bucket);
+		std::cout << "Extrayendo los puntos del bucket con distancia minima"<<std::endl;
+		std::vector<int> *blst = n.T[min_bucket];
+		std::cout << "Concatenando al conjunto" << std::endl;
+		std::copy((*blst).begin(), (*blst).end(), std::inserter(points, points.end()));
 	}
 
-	/* concatenate the buckets with the minimum hamming distance */
+
+	/* print the list of points */
+	std::cout << "Indexes similar to point start at locations : " << std::endl;
+	for(auto v: points)
+		std::cout << v << ", ";
 }
 
 
@@ -136,7 +145,7 @@ std::vector<std::vector<unsigned int>>& Hyperplane::get_vectors( std::vector<uns
 	}
 
 	/* Iterate over the index list and parse the buffer */
-	std::vector<unsigned int> &t = buffet[0]; 
+	// std::vector<unsigned int> &t = buffet[0]; 
 	/* Let i be a value in index, got to buffer[i] and validate the offset
 	   and extract shng_sz integers from buffer and push them to t */
 	
