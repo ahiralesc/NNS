@@ -20,10 +20,8 @@ std::string Hyperplane::encode( Eigen::VectorXf &v )
 }
 
 
-std::unordered_map<std::string, std::vector<int>*>  Hyperplane::partition( Eigen::MatrixXf &H)
+void Hyperplane::partition( Eigen::MatrixXf &H, std::unordered_map<std::string, std::vector<int>> & T)
 {
-	std::unordered_map<std::string, std::vector<int>*> T;
-
 	/* Shingle offset in file */
 	int offset{};
 
@@ -38,16 +36,18 @@ std::unordered_map<std::string, std::vector<int>*>  Hyperplane::partition( Eigen
 		/* Dimensionality reduction via the binary encoding */
 		std::string key = encode( k );
 
-		/* Partition the R^n space */
-		if( T.find( key ) == T.end() )
-			T[key] = new std::vector<int>( {offset} );
-		else
-			T[key]->push_back( offset );
+		T[key].push_back( offset );
+
+		/* Partition the R^n space 
+		if( T.find( key ) == T.end() ) {
+			std::vector<int> list {offset};
+			T[key] = list;
+			//T[key] = new std::vector<int>( {offset} );
+		} else
+			T[key].push_back( offset ); */
 
 		offset++;
 	} while(true);
-
-	return T;
 }
 
 
@@ -83,7 +83,7 @@ void Hyperplane::preprocess()
 		std::cout << "\nContenido de H " << std::endl;
 		std::cout << n.H;
 
-		n.T = partition( n.H );
+		partition( n.H, n.T);
 		L.push_back(n);
 	}
 	std::cout << "Termine la fase de preproceamiento " << std::endl;
@@ -113,7 +113,7 @@ void Hyperplane::search( )
 		std::string key = encode( k );
 		boost::dynamic_bitset<unsigned char> q( key );
 		/* Extract the L hast tables T */
-		for( const std::pair<const std::string, std::vector<int>*>& T : n.T ){
+		for( const std::pair<const std::string, std::vector<int>> & T : n.T ){
 			boost::dynamic_bitset<unsigned char> p( T.first );
 			int dist = hamming(p,q);
 			if( dist < min_dist) {
@@ -122,9 +122,9 @@ void Hyperplane::search( )
 			}
 		}
 		std::cout << "Extrayendo los puntos del bucket con distancia minima"<<std::endl;
-		std::vector<int> *blst = n.T[min_bucket];
+		std::vector<int> & blst = n.T[min_bucket];
 		std::cout << "Concatenando al conjunto" << std::endl;
-		std::copy((*blst).begin(), (*blst).end(), std::inserter(points, points.end()));
+		std::copy(blst.begin(), blst.end(), std::inserter(points, points.end()));
 	}
 
 
