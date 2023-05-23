@@ -2,7 +2,9 @@
 #include <iostream>
 #include <random>
 #include <set>
+#include <climits>
 #include "hyperplane.hpp"
+
 
 
 std::string Hyperplane::encode( Eigen::VectorXf &v ) 
@@ -20,80 +22,71 @@ std::string Hyperplane::encode( Eigen::VectorXf &v )
 }
 
 
+
 void Hyperplane::partition( Eigen::MatrixXf &H, std::unordered_map<std::string, std::vector<int>> & T)
 {
-	/* Shingle offset in file */
+	/* Let offset be the start address of the shingle vector */
 	int offset{};
 
 	reset();
 
-	/* Load points (shingles) and partition the space with the random vectors */
+	/* Partitions the set of points in R^d with random uniform hyperplanes */
 	do {
 		Eigen::VectorXf v = get_shingle();
 		if( v.size() == 0 )
 			 break;
+
+		/* Applies the random hyperplabes to point v */
 		Eigen::VectorXf k = H * v;
-		/* Dimensionality reduction via the binary encoding */
+
+		/* Let key be the binary encoding of the proyection vector k */
 		std::string key = encode( k );
 
+		/* Get the list from hash(key) and append the shingle offset */
 		T[key].push_back( offset );
 
-		/* Partition the R^n space 
-		if( T.find( key ) == T.end() ) {
-			std::vector<int> list {offset};
-			T[key] = list;
-			//T[key] = new std::vector<int>( {offset} );
-		} else
-			T[key].push_back( offset ); */
-
+		/* Increase the shingle offset */
 		offset++;
 	} while(true);
 }
 
 
+
 void Hyperplane::preprocess()
 {
+	/* Initiate a random seed for the random number generator */
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<float> dis(-1, 1);
 
-	std::cout << "Buffer size : " << buffer.size( ) << std::endl;
-	std::cout << "Shingle size : " << shng_sz << std::endl;
-
 	 /* let n be the total number of points (shingles) */
     unsigned int n = ceil( buffer.size()/shng_sz );
-	std::cout << "Number of shingles : " << n << std::endl;
 
 	/* Let k = log_{1/P2}(n), thus k = log_{10}(n) / log_{10}(1/P2) */
 	k = ceil( log10(n) / log10(1/P2) );
-	std::cout << "k : " << k << std::endl;
 	
 	/* Let p = ln(1/P1) / ln(1/P2) */
 	float p = log(1/P1) / log(1/P2);
-	std::cout << "rho : " << p << std::endl;
 
 	/* Let L be the total number of buckets, with L = n^{p} */
 	l = ceil( pow(n, p) );
-	std::cout << "L : " << l << std::endl;
 
-	/* Create L random uniform matrices */
+	/* Create L random uniform matrices and partition the R^d space*/
 	for(int i=0; i<l; i++) {
 		HPN n;
 		n.H = Eigen::MatrixXf::Zero(k, shng_sz).unaryExpr([&](float dummy){return dis(gen);});
-		std::cout << "\nContenido de H " << std::endl;
-		std::cout << n.H;
-
 		partition( n.H, n.T);
 		L.push_back(n);
 	}
-	std::cout << "Termine la fase de preproceamiento " << std::endl;
 }
+
 
 
 int Hyperplane::hamming(boost::dynamic_bitset<unsigned char> &p, boost::dynamic_bitset<unsigned char> &q) 
 {
 	return  (p ^ q).count();
 }
+
 
 
 void Hyperplane::search( )
@@ -106,14 +99,16 @@ void Hyperplane::search( )
 
 	/* Generation of the binary strings */
 	for( HPN n : L) {
-		int min_dist = -1;
+		int min_dist = INT_MAX;
 		std::string min_bucket{};
 
+		/* Compute the proyection vector k and generate the binary encoding q */
 		Eigen::VectorXf k = n.H * v;
-		std::string key = encode( k );
-		boost::dynamic_bitset<unsigned char> q( key );
+		boost::dynamic_bitset<unsigned char> q( encode( k ) );
+		
 		/* Extract the L hast tables T */
 		for( const std::pair<const std::string, std::vector<int>> & T : n.T ){
+			/* Find the bucket that minimizes the hamming distance */
 			boost::dynamic_bitset<unsigned char> p( T.first );
 			int dist = hamming(p,q);
 			if( dist < min_dist) {
@@ -121,12 +116,10 @@ void Hyperplane::search( )
 				min_bucket = T.first;
 			}
 		}
-		std::cout << "Extrayendo los puntos del bucket con distancia minima"<<std::endl;
+		/* Extract the list that minimized the hamming distance */
 		std::vector<int> & blst = n.T[min_bucket];
-		std::cout << "Concatenando al conjunto" << std::endl;
 		std::copy(blst.begin(), blst.end(), std::inserter(points, points.end()));
 	}
-
 
 	/* print the list of points */
 	std::cout << "Indexes similar to point start at locations : " << std::endl;
@@ -135,7 +128,8 @@ void Hyperplane::search( )
 }
 
 
-std::vector<std::vector<unsigned int>>& Hyperplane::get_vectors( std::vector<unsigned int> &index)
+
+std::vector<std::vector<unsigned int>> & Hyperplane::get_vectors( std::vector<unsigned int> &index)
 {
 	/* Create an empty list of vectors of size zero */
 	std::vector<std::vector<unsigned int>> V;
