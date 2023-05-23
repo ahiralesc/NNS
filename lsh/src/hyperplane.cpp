@@ -25,28 +25,23 @@ std::string Hyperplane::encode( Eigen::VectorXf &v )
 
 void Hyperplane::partition( Eigen::MatrixXf &H, std::unordered_map<std::string, std::vector<int>> & T)
 {
-	/* Let offset be the start address of the shingle vector */
-	int offset{};
-
 	reset();
 
 	/* Partitions the set of points in R^d with random uniform hyperplanes */
 	do {
-		Eigen::VectorXf v = get_shingle();
-		if( v.size() == 0 )
+		shingle v = get_shingle();
+		if( v.val.size() == 0 )
 			 break;
 
 		/* Applies the random hyperplabes to point v */
-		Eigen::VectorXf k = H * v;
+		Eigen::VectorXf k = H * v.val;
 
 		/* Let key be the binary encoding of the proyection vector k */
 		std::string key = encode( k );
 
 		/* Get the list from hash(key) and append the shingle offset */
-		T[key].push_back( offset );
+		T[key].push_back( v.index ); 
 
-		/* Increase the shingle offset */
-		offset++;
 	} while(true);
 }
 
@@ -125,6 +120,9 @@ void Hyperplane::search( )
 	std::cout << "Indexes similar to point start at locations : " << std::endl;
 	for(auto v: points)
 		std::cout << v << ", ";
+	
+	/* Compute the euclidian distance between a point p in points and the query q
+	   and insert into a min_heap */
 }
 
 

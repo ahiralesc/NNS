@@ -5,6 +5,12 @@
 #include <vector>
 #include <Eigen/Dense>
 
+struct shingle {
+	 Eigen::VectorXf val;
+	 unsigned int    index;
+};
+
+
 class LSH
 {
     private :
@@ -35,7 +41,7 @@ class LSH
 	virtual void search() = 0;
 
 	/* gets a shingle of size shng_sz */
-	Eigen::VectorXf get_shingle();
+	shingle get_shingle();
 
 	/* resets indexes to the start of the buffer */
 	void reset();

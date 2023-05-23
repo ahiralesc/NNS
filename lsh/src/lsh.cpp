@@ -18,11 +18,12 @@ limitations under the License.
 
 
 using namespace std;
-//
 
-Eigen::VectorXf LSH::get_shingle() 
+
+shingle LSH::get_shingle() 
 {
 	int bz{}, s{}, e{};
+	shingle point;
 
 	Eigen::VectorXf v(shng_sz);
 	bz = buffer.size();
@@ -30,7 +31,10 @@ Eigen::VectorXf LSH::get_shingle()
 	if (s == bz) {
 		// a zero size vector is used as the stoppin criterion
 		v.resize(0);
-		return v;
+		point.val = v;
+		point.index = -1;
+		//return v;
+		return point;
 	}
 
 	// Extract a subvector from the input sequence
@@ -48,9 +52,13 @@ Eigen::VectorXf LSH::get_shingle()
 	} 
 
 	next++;
+
+	point.val = v;
+	point.index = s;
 	
-	return v;
+	return point;
 }
+
 
 void LSH::reset()
 {

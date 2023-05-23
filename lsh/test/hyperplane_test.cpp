@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_SUITE(HyperplaneTest)
 BOOST_AUTO_TEST_CASE(Hyperplane_test)
 {
 	unsigned int k = 9;
-	float P1 = 0.9, P2 = 0.2;
+	float P1 = 0.9, P2 = 0.3;
 	bitset<3> state;
 	std::vector<unsigned int> buffer;
 
