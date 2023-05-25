@@ -120,26 +120,56 @@ void Hyperplane::search( )
 	std::cout << "Indexes similar to point start at locations : " << std::endl;
 	for(auto v: points)
 		std::cout << v << ", ";
-	
-	/* Compute the euclidian distance between a point p in points and the query q
-	   and insert into a min_heap */
+	// Calculate the number of vectors in the buffer based on the buffer size and shng_sz
+	int numVectors = buffer.size() / shng_sz;
+
+	// Calculate distances between v and the vectors
+	std::cout << "Distances from v to the vectors:" << std::endl;
+	for (int vIndex = 0; vIndex < numVectors; vIndex++) {
+    		const std::vector<std::vector<unsigned int>>& vectors = get_vectors(std::vector<unsigned int>{static_cast<unsigned int>(vIndex)});
+    		for (const std::vector<unsigned int>& p : vectors) {
+        		float distance = EuclidianD(v, p);  // Updated function call
+        		std::cout << "Vector at index " << vIndex << ": " << distance << std::endl;
+    		}
+	}	
 }
 
 
+std::vector<std::vector<unsigned int>> Hyperplane::get_vectors(std::vector<unsigned int>& index) {
+    std::vector<std::vector<unsigned int>> V;
+    V.reserve(shng_sz);
 
-std::vector<std::vector<unsigned int>> & Hyperplane::get_vectors( std::vector<unsigned int> &index)
-{
-	/* Create an empty list of vectors of size zero */
-	std::vector<std::vector<unsigned int>> V;
-	for(int i=0; i<shng_sz; i++) {
-		std::vector<unsigned int> vi;
-		V.push_back(vi);
-	}
+    for (int i = 0; i < shng_sz; i++) {
+        std::vector<unsigned int> vi;
+        V.push_back(vi);
+    }
 
-	/* Iterate over the index list and parse the buffer */
-	// std::vector<unsigned int> &t = buffet[0]; 
-	/* Let i be a value in index, got to buffer[i] and validate the offset
-	   and extract shng_sz integers from buffer and push them to t */
-	
-	return V;
+    for (auto i : index) {
+        int offset = i * shng_sz;
+        std::vector<unsigned int> t(buffer.begin() + offset, buffer.begin() + offset + shng_sz);
+
+        for (int j = 0; j < shng_sz; j++) {
+            V[j].push_back(t[j]);
+        }
+    }
+
+    return V;
+}
+
+float EuclidianD(const Eigen::VectorXf& v, const std::vector<unsigned int>& p) {
+    // Check if the dimensions of v and p match
+    if (v.size() != p.size()) {
+        // if missmatched dimenssions: throw this error
+        return -1.0f;
+    }
+
+    // Compute the Euclidean distance between v and p
+    float distance = 0.0f;
+    for (int i = 0; i < v.size(); ++i) {
+        float diff = v[i] - static_cast<float>(p[i]);
+        distance += diff * diff;
+    }
+    distance = std::sqrt(distance);
+
+    return distance;
 }
