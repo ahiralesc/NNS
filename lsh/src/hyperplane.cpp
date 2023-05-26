@@ -84,13 +84,12 @@ int Hyperplane::hamming(boost::dynamic_bitset<unsigned char> &p, boost::dynamic_
 
 
 
-void Hyperplane::search( )
+void Hyperplane::search(std::vector<float> &query )
 {
 	std::set<int> points;
 	
 	/* Preparation of the input vector */
-	Eigen::VectorXf v(9);
-	v << 74, 320, 452, 940, 864, 54, 613, 106, 180;
+	const Eigen::Map<Eigen::VectorXf> v(&query[0],query.size());
 
 	/* Generation of the binary strings */
 	for( HPN n : L) {
@@ -121,17 +120,17 @@ void Hyperplane::search( )
 	for(auto v: points)
 		std::cout << v << ", ";
 	// Calculate the number of vectors in the buffer based on the buffer size and shng_sz
-	int numVectors = buffer.size() / shng_sz;
+	/* int numVectors = buffer.size() / shng_sz; */
 
 	// Calculate distances between v and the vectors
-	std::cout << "Distances from v to the vectors:" << std::endl;
+	/* std::cout << "Distances from v to the vectors:" << std::endl;
 	for (int vIndex = 0; vIndex < numVectors; vIndex++) {
     		const std::vector<std::vector<unsigned int>>& vectors = get_vectors(std::vector<unsigned int>{static_cast<unsigned int>(vIndex)});
     		for (const std::vector<unsigned int>& p : vectors) {
         		float distance = EuclidianD(v, p);  // Updated function call
         		std::cout << "Vector at index " << vIndex << ": " << distance << std::endl;
     		}
-	}	
+	}*/	
 }
 
 
