@@ -132,9 +132,9 @@ int main(int argc, char** argv)
 
 	load_sequence( buffer );
 
-	Hyperplane hyp{ buffer, _k, _P1, _P2};
+	Hyperplane hp{ buffer, _k, _P1, _P2};
 
-	LSH *heuristic = &hyp;
+	LSH *heuristic = &hp;
 
 	heuristic->preprocess();
 

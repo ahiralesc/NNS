@@ -55,7 +55,7 @@ class Hyperplane : public LSH {
 
 	void preprocess();
 
-	void search();
+	void search(std::vector<float> &);
 
 	 std::vector<std::vector<unsigned int>> & get_vectors(std::vector<unsigned int> &);
 

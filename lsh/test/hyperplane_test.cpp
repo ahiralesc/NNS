@@ -53,26 +53,26 @@ BOOST_AUTO_TEST_SUITE(HyperplaneTest)
 BOOST_AUTO_TEST_CASE(Hyperplane_test)
 {
 	unsigned int k = 9;
-	float P1 = 0.9, P2 = 0.3;
-	bitset<3> state;
-	std::vector<unsigned int> buffer;
+    float P1 = 0.9, P2 = 0.3;
+    bitset<3> state;
+    std::vector<unsigned int> buffer;
+    std::vector<float> query {74, 320, 452, 940, 864, 54, 613, 106, 180};
 
-	load_sequence( buffer );
+    load_sequence( buffer );
+
+    state.reset();
+
+    Hyperplane hp{ buffer, k, P1, P2};
+    hp.preprocess();
+    hp.search(query);
 
 
-	state.reset();
+    state.set(0);
+    state.set(1);
+    state.set(2);
 
-	Hyperplane hp{ buffer, k, P1, P2}; 
+    BOOST_CHECK_EQUAL(state.all(), true);
 
-	hp.preprocess();
-	hp.search();
-
-	
-	state.set(0);
-	state.set(1);
-	state.set(2);
-
-	BOOST_CHECK_EQUAL(state.all(), true);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

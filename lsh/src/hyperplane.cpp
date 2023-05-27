@@ -134,7 +134,7 @@ void Hyperplane::search(std::vector<float> &query )
 }
 
 
-std::vector<std::vector<unsigned int>> Hyperplane::get_vectors(std::vector<unsigned int>& index) {
+std::vector<std::vector<unsigned int>> &  Hyperplane::get_vectors(std::vector<unsigned int>& index) {
     std::vector<std::vector<unsigned int>> V;
     V.reserve(shng_sz);
 
