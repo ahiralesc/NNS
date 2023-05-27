@@ -23,7 +23,8 @@ std::string Hyperplane::encode( Eigen::VectorXf &v )
 
 
 
-void Hyperplane::partition( Eigen::MatrixXf &H, std::unordered_map<std::string, std::vector<int>> & T)
+//void Hyperplane::partition( Eigen::MatrixXf &H, std::unordered_map<std::string, std::vector<int>> & T)
+void Hyperplane::partition( Eigen::MatrixXf &H, std::unordered_map<std::string, std::vector<shingle>> & T)
 {
 	reset();
 
@@ -40,7 +41,8 @@ void Hyperplane::partition( Eigen::MatrixXf &H, std::unordered_map<std::string, 
 		std::string key = encode( k );
 
 		/* Get the list from hash(key) and append the shingle offset */
-		T[key].push_back( v.index ); 
+		// T[key].push_back( v.index ); 
+		T[key].push_back( v );
 
 	} while(true);
 }
@@ -86,7 +88,9 @@ int Hyperplane::hamming(boost::dynamic_bitset<unsigned char> &p, boost::dynamic_
 
 void Hyperplane::search(std::vector<float> &query )
 {
-	std::set<int> points;
+	//std::set<int> points;
+	auto cmp = [](const shingle &p, const shingle &q) { return p.index < q.index; };
+	std::set<shingle, decltype(cmp)> points;
 	
 	/* Preparation of the input vector */
 	const Eigen::Map<Eigen::VectorXf> v(&query[0],query.size());
@@ -101,7 +105,7 @@ void Hyperplane::search(std::vector<float> &query )
 		boost::dynamic_bitset<unsigned char> q( encode( k ) );
 		
 		/* Extract the L hast tables T */
-		for( const std::pair<const std::string, std::vector<int>> & T : n.T ){
+		for( const std::pair<const std::string, std::vector<shingle>> & T : n.T ){
 			/* Find the bucket that minimizes the hamming distance */
 			boost::dynamic_bitset<unsigned char> p( T.first );
 			int dist = hamming(p,q);
@@ -111,14 +115,18 @@ void Hyperplane::search(std::vector<float> &query )
 			}
 		}
 		/* Extract the list that minimized the hamming distance */
-		std::vector<int> & blst = n.T[min_bucket];
-		std::copy(blst.begin(), blst.end(), std::inserter(points, points.end()));
+		//std::vector<int> & blst = n.T[min_bucket];
+		std::vector<shingle> & blst = n.T[min_bucket];
+		//std::copy(blst.begin(), blst.end(), std::inserter(points, points.end()));
+		//for(auto point : blst)
+		//	points.insert(point);
 	}
 
 	/* print the list of points */
-	std::cout << "Indexes similar to point start at locations : " << std::endl;
-	for(auto v: points)
-		std::cout << v << ", ";
+	//std::cout << "Indexes similar to point start at locations : " << std::endl;
+	//for(auto v: points)
+	//	std::cout << v << ", ";
+	
 	// Calculate the number of vectors in the buffer based on the buffer size and shng_sz
 	/* int numVectors = buffer.size() / shng_sz; */
 
@@ -155,7 +163,8 @@ std::vector<std::vector<unsigned int>> &  Hyperplane::get_vectors(std::vector<un
     return V;
 }
 
-float EuclidianD(const Eigen::VectorXf& v, const std::vector<unsigned int>& p) {
+
+float Hyperplane::EuclidianD(const Eigen::VectorXf& v, const std::vector<unsigned int>& p) {
     // Check if the dimensions of v and p match
     if (v.size() != p.size()) {
         // if missmatched dimenssions: throw this error
