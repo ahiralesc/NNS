@@ -52,22 +52,20 @@ void parseCLA(int argc, char** argv)
 {
 	try{
 
-		TCLAP::CmdLine cmd("NAME \n \t lsh - Locality Sensitive Hashing \n SYNOPSIS \n \t lsh [OPTIONS] FILE \n DESCRIPTION \n \t Given a text file, lsh computes a set of hash tables and stores them in a JSON file.  \n EXAMPLES \n \t zcat file.gz | lsh -osn file.json \n \t lsh -isn file.txt -osn file.json", ' ', "0.1");
+		TCLAP::CmdLine cmd("NAME \n \t nns-hyperplane - Nearest neighbor search (NNS)  \n SYNOPSIS \n \t nns [OPTIONS] FILE \n DESCRIPTION \n \t Given a text file, nns-hyperplane finds the k nearest neighbors in an integer encoded  dataset by applying the p-stable distributions method. \n EXAMPLES \n \t zcat file.gz | nns-hyperplane -q <space separated list of integers> -k 5 -P1 0.9 -P2 0.3 >> ", ' ', "0.1");
  
  	
 		// List of value arguments
-		TCLAP::ValueArg<string> ofn("f", "json", "The target JSON file that will store the hash tables", false, "", "string");
-		cmd.add( ofn );
-
-		TCLAP::ValueArg<string> ifn("i", "txt", "The source text file", false, "", "string");
+		TCLAP::ValueArg<string> ifn("i", "txt", "The integer encoded text file", false, "", "string");
 		cmd.add( ifn );
 
-		TCLAP::ValueArg<unsigned int> k("s", "length", "The word shingling length. By default 9", false, 9, "int");
+		TCLAP::ValueArg<unsigned int> k("k", "length", "The k-nearest neighbors. Default 10 if not provided", false, 10, "int");
 		cmd.add( k );
-		TCLAP::ValueArg<float> P1("P1", "probability_1", "Pr_H[ h(q) = h(v) ] ≥ P1", false, 0.8, "float");
+		TCLAP::ValueArg<float> P1("P1", "probability_1", "Pr_H[ h(q) = h(v) ] ≥ P1. Default 0.9 if not provided", false, 0.9, "float");
 		cmd.add( P1 );
-		TCLAP::ValueArg<float> P2("P2", "probability_2", "Pr_H[ h(q) = h(v) ] ≤ P2", false, 0.2, "float");
+		TCLAP::ValueArg<float> P2("P2", "probability_2", "Pr_H[ h(q) = h(v) ] ≤ P2. Default 0.3 if not provided.", false, 0.2, "float");
 		cmd.add( P2 );
+		TCLAP::ValueArg<std::string> query
 
 		// Parse the argumnets
 		cmd.parse( argc, argv );

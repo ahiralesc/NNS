@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <set>
 #include <Eigen/Dense>
 #include <boost/dynamic_bitset.hpp>
 
@@ -18,8 +19,7 @@ struct HPN {
 
 	/* Let T be the hyperplane partitioned space of points.
 	   Only the starting position of the shingled point is stores */
-	//std::unordered_map< std::string, std::vector<int>> T;
-	std::unordered_map< std::string, std::vector<shingle>> T;
+	std::unordered_map< std::string, std::vector<int>> T;
 };
 
 
@@ -41,17 +41,13 @@ class Hyperplane : public LSH {
 	std::string encode( Eigen::VectorXf & );
 
 	/* Partitions the n-dimensional point space */
-	//void partition(Eigen::MatrixXf &,  std::unordered_map<std::string, std::vector<int>> &);
-    void partition(Eigen::MatrixXf &,  std::unordered_map<std::string, std::vector<shingle>> &);
+	void partition(Eigen::MatrixXf &,  std::unordered_map<std::string, std::vector<int>> &);
 
 	/* Computes the Hamming distance using boost::dynamic_bitset */
 	int hamming( boost::dynamic_bitset<unsigned char> &, boost::dynamic_bitset<unsigned char> &);
 
 	/* Get the vectors in the concatenated list */
-	std::vector<std::vector<unsigned int>> & get_vectors(std::vector<unsigned int> &);
-
-	/* Computes the Euclidean distance between two points */
-	float EuclidianD(const Eigen::VectorXf &, const std::vector<unsigned int> &);
+	void get_vectors(std::set<int> &, std::vector<Eigen::VectorXf> & );
 
 	public:
 	
@@ -62,7 +58,7 @@ class Hyperplane : public LSH {
 
 	void preprocess();
 
-	void search(std::vector<float> &);
+	void search(std::vector<float> &, int);
 
 };
 

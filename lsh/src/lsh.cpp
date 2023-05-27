@@ -33,7 +33,6 @@ shingle LSH::get_shingle()
 		v.resize(0);
 		point.val = v;
 		point.index = -1;
-		//return v;
 		return point;
 	}
 
@@ -52,7 +51,6 @@ shingle LSH::get_shingle()
 	} 
 
 	next++;
-
 	point.val = v;
 	point.index = s;
 	

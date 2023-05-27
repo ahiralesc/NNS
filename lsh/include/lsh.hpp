@@ -38,7 +38,7 @@ class LSH
 	virtual void preprocess() = 0;
 
 	/* Searches a string in the set of hash tables */
-	virtual void search(std::vector<float> &) = 0;
+	virtual void search(std::vector<float> &, int) = 0;
 
 	/* gets a shingle of size shng_sz */
 	shingle get_shingle();

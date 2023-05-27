@@ -23,8 +23,7 @@ std::string Hyperplane::encode( Eigen::VectorXf &v )
 
 
 
-//void Hyperplane::partition( Eigen::MatrixXf &H, std::unordered_map<std::string, std::vector<int>> & T)
-void Hyperplane::partition( Eigen::MatrixXf &H, std::unordered_map<std::string, std::vector<shingle>> & T)
+void Hyperplane::partition( Eigen::MatrixXf &H, std::unordered_map<std::string, std::vector<int>> & T)
 {
 	reset();
 
@@ -41,8 +40,7 @@ void Hyperplane::partition( Eigen::MatrixXf &H, std::unordered_map<std::string, 
 		std::string key = encode( k );
 
 		/* Get the list from hash(key) and append the shingle offset */
-		// T[key].push_back( v.index ); 
-		T[key].push_back( v );
+		T[key].push_back( v.index ); 
 
 	} while(true);
 }
@@ -85,12 +83,16 @@ int Hyperplane::hamming(boost::dynamic_bitset<unsigned char> &p, boost::dynamic_
 }
 
 
-
-void Hyperplane::search(std::vector<float> &query )
+bool cmp(std::tuple<float, Eigen::VectorXf> & v1, std::tuple<float, Eigen::VectorXf> & v2)
 {
-	//std::set<int> points;
-	auto cmp = [](const shingle &p, const shingle &q) { return p.index < q.index; };
-	std::set<shingle, decltype(cmp)> points;
+    return ( std::get<0>(v1) < std::get<0>(v2) );
+}
+
+
+void Hyperplane::search(std::vector<float> &query, int k )
+{
+	std::vector<std::tuple<float, Eigen::VectorXf>> nearest_points;
+	std::set<int> points;
 	
 	/* Preparation of the input vector */
 	const Eigen::Map<Eigen::VectorXf> v(&query[0],query.size());
@@ -105,7 +107,7 @@ void Hyperplane::search(std::vector<float> &query )
 		boost::dynamic_bitset<unsigned char> q( encode( k ) );
 		
 		/* Extract the L hast tables T */
-		for( const std::pair<const std::string, std::vector<shingle>> & T : n.T ){
+		for( const std::pair<const std::string, std::vector<int>> & T : n.T ){
 			/* Find the bucket that minimizes the hamming distance */
 			boost::dynamic_bitset<unsigned char> p( T.first );
 			int dist = hamming(p,q);
@@ -115,69 +117,50 @@ void Hyperplane::search(std::vector<float> &query )
 			}
 		}
 		/* Extract the list that minimized the hamming distance */
-		//std::vector<int> & blst = n.T[min_bucket];
-		std::vector<shingle> & blst = n.T[min_bucket];
-		//std::copy(blst.begin(), blst.end(), std::inserter(points, points.end()));
-		//for(auto point : blst)
-		//	points.insert(point);
+		std::vector<int> & blst = n.T[min_bucket];
+		std::copy(blst.begin(), blst.end(), std::inserter(points, points.end()));
 	}
 
-	/* print the list of points */
-	//std::cout << "Indexes similar to point start at locations : " << std::endl;
-	//for(auto v: points)
-	//	std::cout << v << ", ";
+	/* Reconstruct the nearest vector points */
+	std::vector<Eigen::VectorXf> vectors;
+	get_vectors(points, vectors);
+
 	
-	// Calculate the number of vectors in the buffer based on the buffer size and shng_sz
-	/* int numVectors = buffer.size() / shng_sz; */
+	/* Select the k nearest vector points */
+	for(Eigen::VectorXf p : vectors) {
+		float dist = (p - v).norm();
+		 std::tuple<float,Eigen::VectorXf> val {dist, p};
+		 nearest_points.push_back( val );
+	}
+	sort(nearest_points.begin(), nearest_points.end(), cmp);
 
-	// Calculate distances between v and the vectors
-	/* std::cout << "Distances from v to the vectors:" << std::endl;
-	for (int vIndex = 0; vIndex < numVectors; vIndex++) {
-    		const std::vector<std::vector<unsigned int>>& vectors = get_vectors(std::vector<unsigned int>{static_cast<unsigned int>(vIndex)});
-    		for (const std::vector<unsigned int>& p : vectors) {
-        		float distance = EuclidianD(v, p);  // Updated function call
-        		std::cout << "Vector at index " << vIndex << ": " << distance << std::endl;
-    		}
-	}*/	
+	/* print to stdout the k nearest vectors */
+	Eigen::IOFormat CommaInitFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, " ", " ", "", "", "", "");
+	int i = 1;
+	for(Eigen::VectorXf p : vectors) {
+		std::cout << p.format(CommaInitFmt) << std::endl;
+		if( i == k ) break;
+		i++;
+	}
 }
 
 
-std::vector<std::vector<unsigned int>> &  Hyperplane::get_vectors(std::vector<unsigned int>& index) {
-    std::vector<std::vector<unsigned int>> V;
-    V.reserve(shng_sz);
+void Hyperplane::get_vectors(std::set<int> & points, std::vector<Eigen::VectorXf> & vectors) 
+{   
+	int bz = buffer.size();
 
-    for (int i = 0; i < shng_sz; i++) {
-        std::vector<unsigned int> vi;
-        V.push_back(vi);
+    for (int s : points) {
+	 	int e = ( (s + shng_sz) > bz )? bz : s + shng_sz;
+		std::vector<float> t(buffer.begin() + s, buffer.begin() + e);
+		// Add zero padding if the last vector size is less than k.
+		if ( ( s + shng_sz ) > bz ) {
+        	int j = ( s + shng_sz ) - bz;
+        	int e = t.size() - j;
+        	for (int i = e; i < e + j; i++)
+            	t.push_back(0);
+    	}
+
+		const Eigen::Map<Eigen::VectorXf> vector(&t[0],t.size());
+		vectors.push_back(vector); 
     }
-
-    for (auto i : index) {
-        int offset = i * shng_sz;
-        std::vector<unsigned int> t(buffer.begin() + offset, buffer.begin() + offset + shng_sz);
-
-        for (int j = 0; j < shng_sz; j++) {
-            V[j].push_back(t[j]);
-        }
-    }
-
-    return V;
-}
-
-
-float Hyperplane::EuclidianD(const Eigen::VectorXf& v, const std::vector<unsigned int>& p) {
-    // Check if the dimensions of v and p match
-    if (v.size() != p.size()) {
-        // if missmatched dimenssions: throw this error
-        return -1.0f;
-    }
-
-    // Compute the Euclidean distance between v and p
-    float distance = 0.0f;
-    for (int i = 0; i < v.size(); ++i) {
-        float diff = v[i] - static_cast<float>(p[i]);
-        distance += diff * diff;
-    }
-    distance = std::sqrt(distance);
-
-    return distance;
 }
