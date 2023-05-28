@@ -51,7 +51,7 @@ void parseCLA(int argc, char** argv)
 {
 	try{
 
-		TCLAP::CmdLine cmd("NAME \n \t nns - Nearest neighbor search (NNS)  \n SYNOPSIS \n \t nns [OPTIONS] FILE \n DESCRIPTION \n \t Given a text file, nns finds the k nearest neighbors in an integer encoded  dataset by applying the p-stable distributions method (hyperplane). \n EXAMPLES \n \t zcat file.gz | nns -q query.txt -k 5 -1 0.9 -2 0.3", ' ', "0.1");
+		TCLAP::CmdLine cmd("NAME \n \t nns - Nearest neighbor search (NNS)  \n SYNOPSIS \n \t nns [OPTIONS] FILE \n DESCRIPTION \n \t Given a text file, nns finds the k nearest neighbors in an integer encoded  dataset by applying the p-stable distributions method (hyperplane). \n EXAMPLES \n \t zcat file.gz | nns -q query.txt -k 5 -1 0.9 -2 0.3 \n \t cat ../../data/sequence.txt | ./nns -q ../../data/query.txt -k 5 | neighbors.txt", ' ', "0.1");
  	
 		// List of value arguments
 		TCLAP::ValueArg<string> ifn("i", "input_file", "Integer encoded file", false, "", "string");
