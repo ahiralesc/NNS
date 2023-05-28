@@ -69,9 +69,9 @@ def loadSource( ):
 
 
 def load_inverted_index( ):
-	inv_index = pd.read_csv( hp["source"], encoding='utf8', sep=" " )
-	inv_index = inv_index.set_index(0)
-	inv_index = inv_index.rename(columns={1:'index'})
+	colnames = ['key','val']
+	inv_index = pd.read_csv( hp["inv_index"], encoding='utf8', sep=" ", names=colnames, header=None)
+	inv_index = inv_index.set_index('key')
 	return inv_index
 
 
@@ -87,10 +87,14 @@ def relabel( source, target, inv_index  ):
 
 	# Data normalization phase
 	for token in data:
-		if token in inv_index:
-			relabeled_source.append( inv_index.loc[token, "index"])
-		else:
-			relabeled_source.append( "None" )
+    	if token in inv_index.index:
+        	relabeled_source.append( inv_index.loc[token, "val"])
+    	else:
+        	relabeled_source.append( "None" )
+	
+	# If a token is not in the index set a NaN value is inserted in 
+	# relabeled vector. None values are replaced by 0
+	relabeled_source = [0 if v is 'None' else v for v in relabeled_source]
 
 	# Storage phase
 	writeRawData( target, pdf.loc[0,'data'] )
@@ -107,7 +111,7 @@ files = loadSource()
 # 3. load the invertex index
 in_idex = load_inverted_index()
 
-# 3. normalize files in the dataset
+# 4. relabel each text file in a target directory
 for file in files:
 	source = hp["source"] + file
 	target = hp["target"] + file
