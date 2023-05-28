@@ -69,7 +69,7 @@ def loadSource( ):
 
 
 def load_inverted_index( ):
-	inv_index = pd.read_csv( hp["source"], encoding='utf8' )
+	inv_index = pd.read_csv( hp["source"], encoding='utf8', sep=" " )
 	inv_index = inv_index.set_index(0)
 	inv_index = inv_index.rename(columns={1:'index'})
 	return inv_index
@@ -108,7 +108,7 @@ files = loadSource()
 in_idex = load_inverted_index()
 
 # 3. normalize files in the dataset
-#for file in files:
+for file in files:
 	source = hp["source"] + file
 	target = hp["target"] + file
 	if hp['verbose'] == True :
