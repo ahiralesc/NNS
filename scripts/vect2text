@@ -1,44 +1,45 @@
+#!/usr/bin/env python
+
+# Copyright Hash-LSH Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+#########################################################################    ##
+#
+# Author: Anthony Hirales Ahuatzin, Fiona Kuang 
+# Email : anthony.hirales@cetys.edu.mx fiona.kuang@cetys.edu.mx
+#
+#########################################################################    ##
+
 import os
+import pandas as pd
 
-def leer_diccionario_invertido(ruta_diccionario):
-    diccionario = {}
-    with open(ruta_diccionario, 'r') as archivo:
-        lineas = archivo.readlines()
-        for linea in lineas:
-            clave, valor = linea.strip().split(':')
-            diccionario[clave] = valor
-    return diccionario
 
-def buscar_cadena(coordenadas, archivo):
-    with open(archivo, 'r') as archivo:
-        lineas = archivo.readlines()
-        numeros = []
-        for coordenada in coordenadas:
-            fila, columna = map(int, coordenada.split(','))
+            
+def load_inverted_index( ):
+    colnames = ['key','val']
+    inv_index = pd.read_csv( "psychosocial_cardiovascular_invindex.txt", encoding='utf8', sep=" ", names=colnames, header=None)
+    inv_index = inv_index.set_index('val')
+    return inv_index
 
-            if fila < len(lineas) and columna < len(lineas[fila]):
-                caracter = lineas[fila][columna]
-                numeros.append(caracter)
-        return numeros
 
-def main():
-    ruta_diccionario = 'https://raw.githubusercontent.com/ahiralesc/Hash/main/scripts/inverted_dictionary.txt'
-    diccionario = leer_diccionario_invertido(ruta_diccionario)
+def search(arr,inv_index):
+    for i in arr:
+        print(inv_index.loc[i, "key"])
 
-    salida_numerica = input('Ingrese las coordenadas separadas por comas (fila,columna): ')
-    coordenadas = salida_numerica.split(',')
 
-    archivo = '.txt'  #ruta del archivo
-
-    numeros = buscar_cadena(coordenadas, archivo)
-
-    cadena_texto = ''
-    for numero in numeros:
-        if numero in diccionario:
-            cadena_texto += diccionario[numero]
-        else:
-            cadena_texto += 'NO ENCONTRADO'
-
-    print('La cadena de texto es:', cadena_texto)
-
-main()
+inv_index = load_inverted_index()
+#arreglo a buscar (vector)
+arr = [1279, 4000, 6079, 1437, 3661, 5779, 3097, 3224, 5282]
+search(arr,inv_index )
