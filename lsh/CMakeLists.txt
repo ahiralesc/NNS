@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
-# Locality Sensitive Hashing
-project(LSH 
+# Nearest Neighbor Search (NNS)
+project(NNS 
 		VERSION 0.0.1 
 		LANGUAGES C CXX)
 
@@ -28,7 +28,7 @@ add_executable(nns ${SOURCES})
 target_link_libraries(Eigen3::Eigen)
 
 # Create a library that unit tests use
-add_library(lsh_lib SHARED
+add_library(nns_lib SHARED
 			${SOURCES} )
 
 enable_testing()
@@ -50,10 +50,10 @@ foreach(testSrc ${TEST_SRCS})
 	add_executable(${testName} ${testSrc})
 
 	# Add dependency
-	# add_dependencies(${testName} lsh_lib)
+	# add_dependencies(${testName} nns_lib)
 
 	# link to Boost libraries AND your targets and dependencies
-	target_link_libraries(${testName} ${Boost_LIBRARIES} Eigen3::Eigen lsh_lib)
+	target_link_libraries(${testName} ${Boost_LIBRARIES} Eigen3::Eigen nns_lib)
 
 	# Location of the test binaries 
 	set_target_properties(${testName} PROPERTIES 

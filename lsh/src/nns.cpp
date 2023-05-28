@@ -24,12 +24,11 @@ limitations under the License.
 
 /* Let isn be the data source input stream (path/file_name) */
 std::string isn{};
+std::string iqs{};
 
-/* Let osn be the data source output stream (path/file_name) */
-std::string osn{}; 
 
 /* Let _k be the shingle size */
-unsigned short _k{9};
+unsigned short _k{};
 
 /* 
 	Let P1 be the probability of Pr_H[ h(q) = h(v) ] ≥ P1 and
@@ -52,29 +51,27 @@ void parseCLA(int argc, char** argv)
 {
 	try{
 
-		TCLAP::CmdLine cmd("NAME \n \t nns-hyperplane - Nearest neighbor search (NNS)  \n SYNOPSIS \n \t nns [OPTIONS] FILE \n DESCRIPTION \n \t Given a text file, nns-hyperplane finds the k nearest neighbors in an integer encoded  dataset by applying the p-stable distributions method. \n EXAMPLES \n \t zcat file.gz | nns-hyperplane -q <space separated list of integers> -k 5 -P1 0.9 -P2 0.3 >> ", ' ', "0.1");
- 
+		TCLAP::CmdLine cmd("NAME \n \t nns-hyperplane - Nearest neighbor search (NNS)  \n SYNOPSIS \n \t nns [OPTIONS] FILE \n DESCRIPTION \n \t Given a text file, nns-hyperplane finds the k nearest neighbors in an integer encoded  dataset by applying the p-stable distributions method. \n EXAMPLES \n \t zcat file.gz | nns-hyperplane -q query.txt -k 5 -1 0.9 -2 0.3", ' ', "0.1");
  	
 		// List of value arguments
-		TCLAP::ValueArg<string> ifn("i", "txt", "The integer encoded text file", false, "", "string");
+		TCLAP::ValueArg<string> ifn("i", "input_file", "Integer encoded file", false, "", "string");
 		cmd.add( ifn );
-
-		TCLAP::ValueArg<unsigned int> k("k", "length", "The k-nearest neighbors. Default 10 if not provided", false, 10, "int");
+		TCLAP::ValueArg<string> iqn("q", "query", "Integer encoded query", true, "", "string");
+		cmd.add( iqn );
+        TCLAP::ValueArg<float> P2("1", "probability_1", "Pr_H[ h(q) = h(v) ] ≤ P2. Default 0.3 ", false, 0.3, "float");
+        cmd.add( P2 );
+        TCLAP::ValueArg<float> P1("2", "probability_2", "Pr_H[ h(q) = h(v) ] ≥ P1. Default 0.9", false, 0.9, "float");
+        cmd.add( P1 );
+		TCLAP::ValueArg<int> k("k", "neighbors", "The k-nearest neighbors. Default 10 if not given", false, 10, "int");
 		cmd.add( k );
-		TCLAP::ValueArg<float> P1("P1", "probability_1", "Pr_H[ h(q) = h(v) ] ≥ P1. Default 0.9 if not provided", false, 0.9, "float");
-		cmd.add( P1 );
-		TCLAP::ValueArg<float> P2("P2", "probability_2", "Pr_H[ h(q) = h(v) ] ≤ P2. Default 0.3 if not provided.", false, 0.2, "float");
-		cmd.add( P2 );
-		TCLAP::ValueArg<std::string> query
 
 		// Parse the argumnets
 		cmd.parse( argc, argv );
 		isn = ifn.getValue();
-		osn = ofn.getValue();
-		_k = k.getValue()-1;
+		iqs = iqn.getValue();
+		_k = k.getValue();
 		_P1 = P1.getValue();
 		_P2 = P2.getValue();
-
 	}catch(TCLAP::ArgException &e) {
             cerr << "Error: " << e.error() << " for argument " << e.argId() << endl;
             exit(EXIT_FAILURE);
@@ -86,23 +83,23 @@ void parseCLA(int argc, char** argv)
 /**
 *   Parses the text file from stdin or from a file
 */
-void load_sequence( std::vector<unsigned int> &buffer  )
+void load_sequence( std::vector<unsigned int> &buffer, std::string fn )
 {
     string input_line{}, str{};
 
     // Parse the input by opening the file using a buffered reader
-    if( !isn.empty() ) {
+    if( !fn.empty() ) {
 
         // create the word buffered reader
-        ifstream _file( isn );
-        if( !_file.is_open()) {
+        ifstream _file( fn );
+        if( !_file.is_open() ) {
             cerr << "Could not open input file: " << isn << endl;
             exit(EXIT_FAILURE);
         }
 
         // loads word strings from a text file
         while( _file >> str )
-            buffer.push_back(std::stof(str));
+            buffer.push_back(std::stof(str));	
         _file.close();
     } else {
         // Parse the input by processing the standard input
@@ -125,16 +122,23 @@ void load_sequence( std::vector<unsigned int> &buffer  )
 int main(int argc, char** argv)
 {
 	std::vector<unsigned int> buffer;
+	std::vector<unsigned int> query;
 
-    parseCLA( argc, argv );
+    /* Parse the command line arguments */
+	parseCLA( argc, argv );
 
-	load_sequence( buffer );
+	/* Load the integer encoded sequence from stdin or a file */
+	load_sequence( buffer, isn );
+	load_sequence( query, iqs );
 
-	Hyperplane hp{ buffer, _k, _P1, _P2};
+	/* Estimate the shingle size and cast the query vector to float*/
+	unsigned int shingle_sz = query.size();
+	std::vector<float> q(query.begin(), query.end());
 
+	Hyperplane hp{ buffer, shingle_sz, _P1, _P2};
 	LSH *heuristic = &hp;
-
 	heuristic->preprocess();
+	heuristic->search(q, _k);
 
     return 0;
 }
