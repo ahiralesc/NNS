@@ -51,6 +51,9 @@ def parseCLA( ):
 	hp["source"] = args['s']
 	hp["target"] = args['t']
 	hp["inv_index"] = args["i"]
+
+	if( args['v'] == None ):
+		args['v'] = True
 	hp["verbose"] = args['v']
 
 	if (hp["source"] == None or hp["target"] == None):
@@ -87,17 +90,14 @@ def relabel( source, target, inv_index  ):
 
 	# Data normalization phase
 	for token in data:
-    	if token in inv_index.index:
-        	relabeled_source.append( inv_index.loc[token, "val"])
-    	else:
-        	relabeled_source.append( "None" )
-	
-	# If a token is not in the index set a NaN value is inserted in 
-	# relabeled vector. None values are replaced by 0
-	relabeled_source = [0 if v is 'None' else v for v in relabeled_source]
+		if token in inv_index.index:
+			relabeled_source.append( inv_index.loc[token, "val"])
+		else:
+			relabeled_source.append( 0 )
 
 	# Storage phase
-	writeRawData( target, pdf.loc[0,'data'] )
+	data = ' '.join(str(v) for v in relabeled_source)
+	writeRawData( target, data )
 	
 
 
@@ -109,12 +109,14 @@ parseCLA( )
 files = loadSource()
 
 # 3. load the invertex index
-in_idex = load_inverted_index()
+inv_index = load_inverted_index()
 
 # 4. relabel each text file in a target directory
 for file in files:
 	source = hp["source"] + file
 	target = hp["target"] + file
+	print(source)
+	print(target)
 	if hp['verbose'] == True :
 		print("Normalizing {}, writting output to {}".format(file, target))
 	relabel( source, target, inv_index )
