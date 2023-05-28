@@ -27,7 +27,7 @@ std::string isn{};
 std::string iqs{};
 
 
-/* Let _k be the shingle size */
+/* Let _k be the number of desired neighbors */
 unsigned short _k{};
 
 /* 
@@ -51,16 +51,16 @@ void parseCLA(int argc, char** argv)
 {
 	try{
 
-		TCLAP::CmdLine cmd("NAME \n \t nns-hyperplane - Nearest neighbor search (NNS)  \n SYNOPSIS \n \t nns [OPTIONS] FILE \n DESCRIPTION \n \t Given a text file, nns-hyperplane finds the k nearest neighbors in an integer encoded  dataset by applying the p-stable distributions method. \n EXAMPLES \n \t zcat file.gz | nns-hyperplane -q query.txt -k 5 -1 0.9 -2 0.3", ' ', "0.1");
+		TCLAP::CmdLine cmd("NAME \n \t nns - Nearest neighbor search (NNS)  \n SYNOPSIS \n \t nns [OPTIONS] FILE \n DESCRIPTION \n \t Given a text file, nns finds the k nearest neighbors in an integer encoded  dataset by applying the p-stable distributions method (hyperplane). \n EXAMPLES \n \t zcat file.gz | nns -q query.txt -k 5 -1 0.9 -2 0.3", ' ', "0.1");
  	
 		// List of value arguments
 		TCLAP::ValueArg<string> ifn("i", "input_file", "Integer encoded file", false, "", "string");
 		cmd.add( ifn );
 		TCLAP::ValueArg<string> iqn("q", "query", "Integer encoded query", true, "", "string");
 		cmd.add( iqn );
-        TCLAP::ValueArg<float> P2("1", "probability_1", "Pr_H[ h(q) = h(v) ] ≤ P2. Default 0.3 ", false, 0.3, "float");
+        TCLAP::ValueArg<float> P2("2", "probability_2", "Pr_H[ h(q) = h(v) ] ≤ P2. Default 0.3 ", false, 0.3, "float");
         cmd.add( P2 );
-        TCLAP::ValueArg<float> P1("2", "probability_2", "Pr_H[ h(q) = h(v) ] ≥ P1. Default 0.9", false, 0.9, "float");
+        TCLAP::ValueArg<float> P1("1", "probability_1", "Pr_H[ h(q) = h(v) ] ≥ P1. Default 0.9", false, 0.9, "float");
         cmd.add( P1 );
 		TCLAP::ValueArg<int> k("k", "neighbors", "The k-nearest neighbors. Default 10 if not given", false, 10, "int");
 		cmd.add( k );
