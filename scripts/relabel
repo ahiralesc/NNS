@@ -19,6 +19,8 @@
 #
 # Author: Anthony Hirales Ahuatzin
 # Email : anthony.hirales@cetys.edu.mx
+# 		  Fiona Kuang
+#	      fiona.kuang@cetys.edu.mx
 #
 #########################################################################    ##
 
@@ -33,7 +35,8 @@ hp = {
 		"source"	: None,
 		"target"	: None,
 		"inv_index"	: None,
-		"verbose"	: False
+		"method"	: None,
+		"verbose"	: False,
 	}
 
 
@@ -44,6 +47,7 @@ def parseCLA( ):
 	parser.add_argument('-t', nargs='?', default=None, type=str, help='The target filtered text file')
 	parser.add_argument('-i', nargs='?', default=None, type=str, help='The inverted index text file')
 	parser.add_argument('-v', nargs='?', default=False, type=bool, help='Verbose output');
+	parser.add_argument('-m', nargs='?', default="text2vect", type=str, help='Defaul text2vect. Options text2vect or vect2text')
 
 	args = vars(parser.parse_args())
 
@@ -51,6 +55,7 @@ def parseCLA( ):
 	hp["source"] = args['s']
 	hp["target"] = args['t']
 	hp["inv_index"] = args["i"]
+	hp["method"] = args["m"]
 
 	if( args['v'] == None ):
 		args['v'] = True
@@ -74,7 +79,10 @@ def loadSource( ):
 def load_inverted_index( ):
 	colnames = ['key','val']
 	inv_index = pd.read_csv( hp["inv_index"], encoding='utf8', sep=" ", names=colnames, header=None)
-	inv_index = inv_index.set_index('key')
+	if( hp["method"] == "text2vect" ):
+		inv_index = inv_index.set_index('key')
+	else:
+		inv_index = inv_index.set_index('val')
 	return inv_index
 
 
@@ -88,10 +96,14 @@ def relabel( source, target, inv_index  ):
 	# tokenize data
 	data = data.split(" ")
 
+	print("Tipo : ", inv_index.index)
+
 	# Data normalization phase
 	for token in data:
+		if( hp["method"] == "vect2text" ):
+			token = int(token)
 		if token in inv_index.index:
-			relabeled_source.append( inv_index.loc[token, "val"])
+			relabeled_source.append( inv_index.loc[token, "key"])
 		else:
 			relabeled_source.append( 0 )
 
@@ -115,8 +127,6 @@ inv_index = load_inverted_index()
 for file in files:
 	source = hp["source"] + file
 	target = hp["target"] + file
-	print(source)
-	print(target)
 	if hp['verbose'] == True :
 		print("Normalizing {}, writting output to {}".format(file, target))
 	relabel( source, target, inv_index )
