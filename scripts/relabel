@@ -96,20 +96,21 @@ def relabel( source, target, inv_index  ):
 	# tokenize data
 	data = data.split(" ")
 
-	print("Tipo : ", inv_index.index)
-
 	# Data normalization phase
 	for token in data:
 		if( hp["method"] == "vect2text" ):
 			token = int(token)
 		if token in inv_index.index:
-			relabeled_source.append( inv_index.loc[token, "key"])
+			if( hp["method"] == "vect2text" ):
+				relabeled_source.append( inv_index.loc[token, "key"])
+			else:
+				relabeled_source.append( inv_index.loc[token, "val"])
 		else:
 			relabeled_source.append( 0 )
 
 	# Storage phase
-	data = ' '.join(str(v) for v in relabeled_source)
-	writeRawData( target, data )
+#	data = ' '.join(str(v) for v in relabeled_source)
+#	writeRawData( target, data )
 	
 
 
