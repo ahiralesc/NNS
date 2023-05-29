@@ -109,8 +109,8 @@ def relabel( source, target, inv_index  ):
 			relabeled_source.append( 0 )
 
 	# Storage phase
-#	data = ' '.join(str(v) for v in relabeled_source)
-#	writeRawData( target, data )
+	data = ' '.join(str(v) for v in relabeled_source)
+	writeRawData( target, data )
 	
 
 
