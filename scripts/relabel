@@ -98,8 +98,10 @@ def relabel( source, target, inv_index  ):
 
 	# Data normalization phase
 	for token in data:
+		token = token.strip()
 		if( hp["method"] == "vect2text" ):
 			token = int(token)
+		#print("Token : ", token, " : ", token in inv_index.index)
 		if token in inv_index.index:
 			if( hp["method"] == "vect2text" ):
 				relabeled_source.append( inv_index.loc[token, "key"])
