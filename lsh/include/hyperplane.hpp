@@ -9,7 +9,6 @@
 #include <set>
 #include <Eigen/Dense>
 #include <boost/dynamic_bitset.hpp>
-
 #include "lsh.hpp"
 
 
@@ -21,6 +20,7 @@ struct HPN {
 	   Only the starting position of the shingled point is stores */
 	std::unordered_map< std::string, std::vector<int>> T;
 };
+
 
 
 class Hyperplane : public LSH {
@@ -38,27 +38,27 @@ class Hyperplane : public LSH {
 	std::vector<HPN> L;
 
 	/* Vector to binary string encoding */
-	std::string encode( Eigen::VectorXf & );
+	std::string encode(Eigen::VectorXf&);
 
 	/* Partitions the n-dimensional point space */
-	void partition(Eigen::MatrixXf &,  std::unordered_map<std::string, std::vector<int>> &);
+	void partition(Eigen::MatrixXf&, std::unordered_map<std::string, std::vector<int>>&);
 
 	/* Computes the Hamming distance using boost::dynamic_bitset */
-	int hamming( boost::dynamic_bitset<unsigned char> &, boost::dynamic_bitset<unsigned char> &);
+	int hamming(boost::dynamic_bitset<unsigned char>&, boost::dynamic_bitset<unsigned char>&);
 
 	/* Get the vectors in the concatenated list */
-	void get_vectors(std::set<int> &, std::vector<Eigen::VectorXf> & );
+	void get_vectors(std::set<int>&, std::vector<Eigen::VectorXf>&);
 
-	public:
-	
-	Hyperplane(std::vector<unsigned int> & buffer, unsigned int shng_sz, float _P1, float _P2) : 
+public:
+
+	Hyperplane(std::vector<unsigned int>& buffer, unsigned int shng_sz, float _P1, float _P2) :
 		LSH{ buffer, shng_sz },
 		P1{ _P1 },
 		P2{ _P2 } {};
 
 	void preprocess();
 
-	void search(std::vector<float> &, int);
+	void search(std::vector<float>&, int);
 
 };
 

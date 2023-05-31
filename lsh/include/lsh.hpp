@@ -6,19 +6,19 @@
 #include <Eigen/Dense>
 
 struct shingle {
-	 Eigen::VectorXf val;
-	 unsigned int    index;
+	Eigen::VectorXf val;
+	unsigned int    index;
 };
 
 
 class LSH
 {
-    private :
-    
+private:
+
 	/* Used by get_shingle */
 	unsigned int next{};
 
-	protected:
+protected:
 
 	/* The vector of text strings */
 	std::vector<unsigned int>& buffer;
@@ -26,19 +26,19 @@ class LSH
 	/* Shingle size (shng_sz) */
 	unsigned int shng_sz{};
 
-    public :
+public:
 
-    /* Class constructor */
-    LSH( std::vector<unsigned int> & _buffer, unsigned int _shng_sz ) : 
+	/* Class constructor */
+	LSH(std::vector<unsigned int>& _buffer, unsigned int _shng_sz) :
 		buffer{ _buffer },
-		shng_sz { _shng_sz },
-		next { 0 } {}; 
+		shng_sz{ _shng_sz },
+		next{ 0 } {};
 
 	/* Maps a set of points to a set of hash tables */
 	virtual void preprocess() = 0;
 
 	/* Searches a string in the set of hash tables */
-	virtual void search(std::vector<float> &, int) = 0;
+	virtual void search(std::vector<float>&, int) = 0;
 
 	/* gets a shingle of size shng_sz */
 	shingle get_shingle();
