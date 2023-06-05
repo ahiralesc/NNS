@@ -37,6 +37,7 @@ hp = {
 		"inv_index"	: None,
 		"method"	: None,
 		"verbose"	: False,
+		"lenght"	: 0
 	}
 
 
@@ -46,8 +47,9 @@ def parseCLA( ):
 	parser.add_argument('-s', nargs='?', default=None, type=str, help='The source text file')
 	parser.add_argument('-t', nargs='?', default=None, type=str, help='The target filtered text file')
 	parser.add_argument('-i', nargs='?', default=None, type=str, help='The inverted index text file')
-	parser.add_argument('-v', nargs='?', default=False, type=bool, help='Verbose output');
+	parser.add_argument('-v', nargs='?', default=False, type=bool, help='Verbose output')
 	parser.add_argument('-m', nargs='?', default="text2vect", type=str, help='Defaul text2vect. Options text2vect or vect2text')
+	parser.add_argument('-l', nargs='?', default=None, type=int, help='Output sequence length')
 
 	args = vars(parser.parse_args())
 
@@ -56,6 +58,7 @@ def parseCLA( ):
 	hp["target"] = args['t']
 	hp["inv_index"] = args["i"]
 	hp["method"] = args["m"]
+	hp["lenght"] = args["l"]
 
 	if( args['v'] == None ):
 		args['v'] = True
@@ -70,6 +73,7 @@ def parseCLA( ):
 def loadSource( ):
 	files = list()
 	for file in os.listdir( hp["source"] ):
+		file = file.strip()
 		key, val = file.split(".")
 		if val == "txt" or val == "TXT":
 			files.append( file )
