@@ -149,8 +149,10 @@ void Hyperplane::search(std::vector<float>& query, int k)
 	/* print to stdout the k nearest vectors */
 	Eigen::IOFormat CommaInitFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, " ", " ", "", "", "", "");
 	int i = 1;
-	for (Eigen::VectorXf p : vectors) {
-		std::cout << p.format(CommaInitFmt) << std::endl;
+	for ( std::tuple<float, Eigen::VectorXf> p : nearest_points ) {
+		float dist = std::get<0>(p);
+		Eigen::VectorXf g = std::get<1>(p);
+		std::cout << g.format(CommaInitFmt) << std::endl;
 		if (i == k) break;
 		i++;
 	}
