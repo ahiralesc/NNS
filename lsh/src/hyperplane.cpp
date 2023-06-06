@@ -2,8 +2,8 @@
 #include <cmath>
 #include <iostream>
 #include <random>
-#include <set>
 #include <climits>
+#include <algorithm>
 
 
 
@@ -20,6 +20,12 @@ std::string Hyperplane::encode(Eigen::VectorXf& v)
 	}
 
 	return str;
+}
+
+
+int Hyperplane::hamming(boost::dynamic_bitset<unsigned char>& p, boost::dynamic_bitset<unsigned char>& q)
+{
+	return  (p ^ q).count();
 }
 
 
@@ -79,24 +85,6 @@ void Hyperplane::preprocess()
 
 
 
-int Hyperplane::hamming(boost::dynamic_bitset<unsigned char>& p, boost::dynamic_bitset<unsigned char>& q)
-{
-	return  (p ^ q).count();
-}
-
-
-
-bool cmp(std::tuple<float, Eigen::VectorXf>& v1, std::tuple<float, Eigen::VectorXf>& v2)
-{
-	return (std::get<0>(v1) < std::get<0>(v2));
-}
-
-
-bool bcmp( std::tuple<unsigned int, std::vector<int>> v1, std::tuple<unsigned int, std::vector<int>> v2) {
-	return (std::get<0>(v1) < std::get<0>(v2));
-}
-
-
 void Hyperplane::search(std::vector<float>& query, int k)
 {
 	std::vector<std::tuple<float, Eigen::VectorXf>> nearest_points;
@@ -106,7 +94,7 @@ void Hyperplane::search(std::vector<float>& query, int k)
 	const Eigen::Map<Eigen::VectorXf> v(&query[0], query.size());
 
 	/* Generation of the binary strings */
-	std::vector< std::tuple<unsigned int, std::vector<int>> > buckets{};
+	std::vector<std::tuple<unsigned int, std::vector<int>>> buckets{};
 	for (HPN n : L) {
 		/* Compute the proyection vector k and generate the binary encoding q */
 		Eigen::VectorXf k = n.H * v;
@@ -124,7 +112,12 @@ void Hyperplane::search(std::vector<float>& query, int k)
 
 	/* There one or more buckets with equal min hamming distance. Sort and extract the minimum */
 	int min = INT_MAX;
-	sort(buckets.begin(), buckets.end(), bcmp);
+	std::sort(buckets.begin(), buckets.end(), [](
+		const std::tuple<unsigned int, std::vector<int>> &v1,
+		const std::tuple<unsigned int, std::vector<int>> &v2) {
+			return std::get<0>(v1) < std::get<0>(v2);
+		});
+	
 	for (const std::tuple<int, std::vector<int>> bucket : buckets) {
 		if (std::get<0>(bucket) <= min) {
 			min = std::get<0>(bucket);
@@ -144,12 +137,16 @@ void Hyperplane::search(std::vector<float>& query, int k)
 		std::tuple<float, Eigen::VectorXf> val{ dist, p };
 		nearest_points.push_back(val);
 	}
-	sort(nearest_points.begin(), nearest_points.end(), cmp);
+	std::sort(nearest_points.begin(), nearest_points.end(), [](
+		const std::tuple<float, Eigen::VectorXf> &v1, 
+		const std::tuple<float, Eigen::VectorXf> &v2) {
+			return std::get<0>(v1) < std::get<0>(v2);
+		});
 
 	/* print to stdout the k nearest vectors */
 	Eigen::IOFormat CommaInitFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, " ", " ", "", "", "", "");
 	int i = 1;
-	for ( std::tuple<float, Eigen::VectorXf> p : nearest_points ) {
+	for (std::tuple<float, Eigen::VectorXf> p : nearest_points) {
 		float dist = std::get<0>(p);
 		Eigen::VectorXf g = std::get<1>(p);
 		std::cout << g.format(CommaInitFmt) << std::endl;
@@ -157,6 +154,8 @@ void Hyperplane::search(std::vector<float>& query, int k)
 		i++;
 	}
 }
+
+
 
 
 void Hyperplane::get_vectors(std::set<int>& points, std::vector<Eigen::VectorXf>& vectors)
