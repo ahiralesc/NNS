@@ -91,6 +91,9 @@ class To_lower_case(Filter):
         return pdf
 
 
+class Label_regex(Filter):
+
+
 
 # Filter factory
 class FilterFactory:
@@ -101,6 +104,7 @@ class FilterFactory:
             'rmpc'  : Rm_puntuacion(),
             'rmnc'  : Rm_numeric(),
             'rmsc'  : Rm_special(),
-            'ttlc'   : To_lower_case()
+            'ttlc'   : To_lower_case(),
+			'regex' : Reg
         }[atype]
         return auto
