@@ -89,6 +89,7 @@ def normalize( source, target  ):
 	filters = dict()
 	filter_factory = FilterFactory()
 	for name in hp["filters"]:
+		print("Creating filter : ", name )
 		filters[name] = filter_factory.create(name)
 
 	# Data normalization phase

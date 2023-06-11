@@ -94,7 +94,7 @@ class To_lower_case(Filter):
 class Label_regex(Filter):
 	def __init__(self):
 		self.description = "Label strings that match a regular expression with a given label"
-		seld.name = "regex"
+		self.name = "regex"
 		self.regexset = [
 (' #AGE_RANGE ',r'\b\d{2,3}\s*(?:[-]\s*\d{2,3}|\+)\s*(?:years)\b'),
 (' #AGE_RANGE ',r'\b(?:a(?:ge|ged|ges))\s*\d{1,3}\s*(?:to|through)\s*\d{1,3}\b'),
@@ -105,7 +105,6 @@ class Label_regex(Filter):
 (' #BLOOD_PRESSURE ',r'\b\d{2,3}/\d{2,3}\s*(?:mmHg)\b'),
 (' #DATE ',r'(?:j(?:anuary|an.|an|a)?|f(?:ebruary|eb.|eb)?|m(?:arch|ar.|ar|r)?|a(?:pril|pr.|pr|p)?|m(?:ay|y)?|j(?:une|un|e)?|j(?:uly|ul|l)?a(?:ugust|ug.|ug|g)?|s(?:eptember|ept.|ep)?|o(?:ctober|ct.|ct)?|n(?:ovember|ov.|ov)?|d(?:ecember|ec.|ec)?)\s*\d{1,2},\s*(?:19[5-9]\d|2\d{3}|\d{2})(?=\D|$)'),
 (' #DATE ',r'\b(?:(?:0[1-9]|1[012])(?:\D|$)(?:0[1-9]|[12][0-9]|3[01])(?:\D|$)(?:19[1-9]\d|2\d{3}|\d{2}))'),
-(' #WEIGHT_RANGE ',r'\b(?:[0-9]*[.])?[0-9]+\s*(?:\-|to)\s*(?:[0-9]*[.])?[0-9]+\s*(?:p(?:ound|ounds)?|l(?:b.|bs|b)?|o(?:unce|unces)?|o(?:z.|z)?|g(?:rains|rams)?)\b' )
 (' #WEIGHT ',r'\b(?:[0-9]*[.])?[0-9]+\s*(?:p(?:ound|ounds)?|l(?:b.|bs|b)?|o(?:unce|unces)?|o(?:z.|z)?|g(?:rains|rams)?)\b'),
 (' #HEIGHT ',r'\b\d+\s*(?:f(?:t|t.|eet)?|\'),?\s*\d+?\s*(?:i(?:n|n.|nches)|\")?\b'),
 (' #OXYGEN_SATURATION ',r'(?:svo2|sto2|spo2|sao2)\s*[(]?\s*(?:above|below|of|less than|greater than|was|\<|\:)?\s*[+-]?(?:[0-9]*[.])?[0-9]+\s*(?:±|[\+\/-]+)?\s*(?:[+-]?(?:[0-9]*[.])?[0-9]+)?\s*(?:%|percent)\s*[)]?'),
@@ -129,7 +128,7 @@ class FilterFactory:
             'rmpc'  : Rm_puntuacion(),
             'rmnc'  : Rm_numeric(),
             'rmsc'  : Rm_special(),
-            'ttlc'   : To_lower_case(),
+            'ttlc'  : To_lower_case(),
 			'regex' : Label_regex()
         }[atype]
         return auto
