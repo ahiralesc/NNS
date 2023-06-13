@@ -96,7 +96,8 @@ class Label_regex(Filter):
 		self.description = "Label strings that match a regular expression with a given label"
 		self.name = "regex"
 		self.regexset = [
-(' #NUMERIC_AGE ',r'\b\d{1,3}\s*[-]?\s*(?:y(?:o|[\.o\.]+|/o|ears old|ear old||ear-old))\b')
+(' #NUMERIC_AGE ',r'\b\d{1,3}\s*[-]?\s*(?:y(?:o|[\.o\.]+|/o|ears old|ear old||ear-old))\b'),
+(' #STRING_AGE ', r'\b(?:(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)[-]?(?:one|two|three|four|five|six|seven|eight|nine)?|(?:one|two|three|four|five|six|seven|eight|nine)?[-]?(?:hundred)[-]?(?:and)?[-]?(?:one|two|three|four|five|six|seven|eight|nine)?|(?:zero|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty))[-](?:year)[-](?:old)\b')
 ]
 
 	def apply(self, pdf, column):
