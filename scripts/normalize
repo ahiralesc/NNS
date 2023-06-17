@@ -27,6 +27,9 @@ import argparse
 import pandas as pd
 import os
 from normalization import FilterFactory, loadRawData, writeRawData
+import nltk
+nltk.download('punkt')
+from nltk.tokenize import word_tokenize
 
 
 hp = {
@@ -83,7 +86,8 @@ def loadSource( ):
 
 def normalize( source, target  ):
 	# data loading phase
-	pdf = pd.DataFrame( data = { 'data': [ loadRawData(source) ] }, index=[0] )
+	dt = " ".join(word_tokenize(loadRawData(source)))
+	pdf = pd.DataFrame( data = { 'data': [ dt ] }, index=[0] )
 
 	# filter creation phase
 	filters = dict()
