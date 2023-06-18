@@ -4,7 +4,7 @@
 
 In 1999 Gionis et. al $^1$ addressed the Nearest Neighbors Search (NNS) problem as a mapping problem in associative memory (Locality Sensitive Hashing LSH). Although a formal proof establishing an equivalence between both classes of problems was not given, they showed that the allocation and search operators maintain similarity/dissimilarity properties between objects given two probabilities. Their contribution was founded on the following reasoning <i>"similar objects in Euclidean space are be placed in the same location in associative memory with high probability, whereas dissimilar objects are placed in the same location in associative memory with low probability."</i> Formally, stated as:
 
-Let $\mathbb{H} = \left \{ h : S \mapsto U  \right \}$ be a family of hash functions $ h $, such that given any two vectors $v, q \in S$ the following holds:
+Let $H = \left \{ h : S \mapsto U  \right \}$ be a family of hash functions $ h $, such that given any two vectors $v, q \in S$ the following holds:
 
 1. if $v \in B \left ( q, r_1 \right )$ then $Pr_H \left [ h\left ( q \right ) = h\left ( v \right ) \right ] \geq p_1$
 2. if $v \notin B \left ( q, r_2 \right )$ then $Pr_H \left [ h\left ( q \right ) = h\left ( v \right ) \right ] \leq p_2$
