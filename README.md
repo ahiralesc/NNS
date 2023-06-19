@@ -15,6 +15,8 @@ This repository contains a C/C++ implementation of the orthogonal LSH heuristic.
 
 ![The text processing workflow](img/workflow.png)
 
+The repository also include a series of bash and python scripts that facilitate the data pre-processing process. The workflow starts by transforming PDF files to UTF-8 text files via the pdf2txt script. You might need to install [pdftotext]( https://www.xpdfreader.com/pdftotext-man.html) utilities first. In the normalization phase, multiples filters can be selectively applied.  The corpora extraction phase retrieve unique strings and sorts them in lexicographical order. Each string is assigned a unique integer label in the Z_inverted index phase. The normalized text files are later relabeled using the inverted index in the relabeling phase. Finally, the vectored text files can be used by LSH to perform a query. Note, the query must also be relabeled using the inverted index.  
+
 <p><small>
 $^1$ Gionis, A., Indyk, P. and Motwani, R. <i>Similarity Search in High Dimensions via Hashing</i>. Proceedings of the 25th International Conference on Very Large Data Bases (San Francisco, CA, USA, 1999), 518–529. <b>1999</b>.
 </small></p>
