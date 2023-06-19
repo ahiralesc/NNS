@@ -13,6 +13,8 @@ With $r_1, r_2, c \in \mathbb{R}^{+}, c \neq 0, r_2 = c r_1$, $p_1$ and $p_2$ pr
 
 This repository contains a C/C++ implementation of the orthogonal LSH heuristic. The heuristic input is an integer-encoded sequence of words, an integer-encoded text file, and an inverse dictionary. The sequence size is nine words maximum. Zero passing is added if the query size is less than nine words. The repository also includes several bash and python scripts that facilitate data preprocessing phases.
 
+![The text processing workflow](img/workflow.png)
+
 <p><small>
 $^1$ Gionis, A., Indyk, P. and Motwani, R. <i>Similarity Search in High Dimensions via Hashing</i>. Proceedings of the 25th International Conference on Very Large Data Bases (San Francisco, CA, USA, 1999), 518–529. <b>1999</b>.
 </small></p>
